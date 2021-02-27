@@ -97,6 +97,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(WXWIN)\include; $(WXWIN)\include\msvc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -112,6 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(WXWIN)\include; $(WXWIN)\include\msvc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

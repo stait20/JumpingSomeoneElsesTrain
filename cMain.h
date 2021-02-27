@@ -7,13 +7,12 @@ public:
 	cMain();
 	~cMain();
 
-public:
-	wxButton* m_btn1 = nullptr;
-	wxTextCtrl *m_txt1 = nullptr;
-	wxListBox* m_list1 = nullptr;
-	wxRadioBox* m_rad1 = nullptr;
+private:
+	void OnRadioBoxChange(wxCommandEvent& evt);
 
-	void OnButtonClicked(wxCommandEvent& evt);
+public:
+	wxRadioBox* m_rad1 = nullptr;
+	wxTextCtrl* m_textctrl1 = nullptr;
 
 	wxDECLARE_EVENT_TABLE();
 };
