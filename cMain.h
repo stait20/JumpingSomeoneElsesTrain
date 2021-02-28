@@ -20,6 +20,11 @@ public:
 	wxStaticText* m_childtext = nullptr;
 
 
+	wxComboBox* m_fromstation = nullptr;
+	wxComboBox* m_tostation = nullptr;
+	wxStaticText* m_fromtext = nullptr;
+	wxStaticText* m_totext = nullptr;
+
 	wxDECLARE_EVENT_TABLE();
 };
 
