@@ -1,4 +1,5 @@
-#pragma once
+#ifndef APP_HEADER
+#define APP_HEADER
 
 #include "wx/wx.h"
 #include "cMain.h"
@@ -13,5 +14,7 @@ private:
 
 public:
 	virtual bool OnInit();
+	
 };
 
+#endif
