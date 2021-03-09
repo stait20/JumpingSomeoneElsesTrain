@@ -110,8 +110,24 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	// Text for available times
 	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:", wxPoint(10, 320), wxDefaultSize);
 
+	int height = 8;
+	int width = 4;
 
 
+	trainbtn = new wxButton*[width * height];
+	wxGridSizer* traingrid = new wxGridSizer(height, width, 0, 0);
+
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			trainbtn[j * width + i] = new wxButton(rightpanel, 10000 + (j * width + i));
+			traingrid->Add(trainbtn[j * width + i], 1, wxEXPAND | wxALL);
+		}
+	}
+
+	rightpanel->SetSizer(traingrid);
+	traingrid->Layout();
 
 
 	splittermain->SplitVertically(leftpanel, rightpanel);
@@ -122,6 +138,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 cMain::~cMain()
 {
+	delete[] trainbtn;
 }
 
 
