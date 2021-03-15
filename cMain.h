@@ -41,7 +41,8 @@ public:
 	wxListBox* m_timelist = nullptr;
 	wxStaticText* m_timetext = nullptr;
 
-	wxButton** trainbtn = nullptr;
+	wxButton** trainbtn1 = nullptr;
+	wxButton** trainbtn2 = nullptr;
 
 	wxDECLARE_EVENT_TABLE();
 };
