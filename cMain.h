@@ -11,6 +11,10 @@ public:
 
 private:
 	void OnRadioBoxChange(wxCommandEvent& evt);
+	void OnTrainButtonClick(wxCommandEvent& evt);
+
+	int height = 8;
+	int width = 2;
 
 public:
 	
@@ -43,6 +47,8 @@ public:
 
 	wxButton** trainbtn1 = nullptr;
 	wxButton** trainbtn2 = nullptr;
+
+	wxButton* m_submit = nullptr;
 
 	wxDECLARE_EVENT_TABLE();
 };

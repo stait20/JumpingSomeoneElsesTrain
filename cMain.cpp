@@ -3,12 +3,15 @@
 #include "cMain.h"
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
-	EVT_RADIOBOX(101, OnRadioBoxChange)
+	EVT_RADIOBOX(100, OnRadioBoxChange)
 wxEND_EVENT_TABLE()
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPoint(30, 30), wxDefaultSize)
 {
-
+	/*  Split screen vertically into two equal sections. 
+	*   Things can be added to either rightpanel or leftpanel
+	*   depending on where they should be placed
+	*/
 	wxBoxSizer* sizermain = new wxBoxSizer(wxVERTICAL);
 	wxSplitterWindow* splittermain = new wxSplitterWindow(this, wxID_ANY);
 	splittermain->SetSashGravity(0.5);
@@ -25,7 +28,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	radioChoices.Add("Return");
 
 	// Create radio buttons
-	m_rad1 = new wxRadioBox(leftpanel, 101, "Select one of the options", wxPoint(10, 10), wxDefaultSize, radioChoices, 2, wxRA_VERTICAL);
+	m_rad1 = new wxRadioBox(leftpanel, 100, "Select one of the options", wxPoint(10, 10), wxDefaultSize, radioChoices, 2, wxRA_VERTICAL);
 
 	// Temp text box to show selection
 	m_textctrl1 = new wxTextCtrl(leftpanel, wxID_ANY, m_rad1->GetString(m_rad1->GetSelection()), wxPoint(10, 100), wxSize(140, wxDefaultCoord));
@@ -110,23 +113,26 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	// Text for available times
 	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:", wxPoint(10, 320), wxDefaultSize);
 
-	int height = 8;
-	int width = 2;
 
-
+	// Initiate button array and grid sizer to place buttons in
 	trainbtn1 = new wxButton*[width * height];
 	wxGridSizer* traingrid1 = new wxGridSizer(height, width, 0, 0);
 
+	// Loop through the height and width
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			trainbtn1[j * width + i] = new wxButton(rightpanel, 10000 + (j * width + i));
-			traingrid1->Add(trainbtn1[j * width + i], 1, wxEXPAND);
+			// Create new button placed into the array of buttons
+			trainbtn1[j * height + i] = new wxButton(rightpanel, 10000 + (j * height + i));
+			// Add new button into the grid sizer
+			traingrid1->Add(trainbtn1[j * height + i], 1, wxEXPAND);
+			// Execute OnTrainButtonClick when the button is clicked
+			trainbtn1[j * height + i]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &cMain::OnTrainButtonClick, this  );
 		}
 	}
 
-
+	// Repeat same process as previously with right side of train display
 	trainbtn2 = new wxButton * [width * height];
 	wxGridSizer* traingrid2 = new wxGridSizer(height, width, 0, 0);
 
@@ -134,18 +140,32 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	{
 		for (int j = 0; j < width; j++)
 		{
-			trainbtn2[j * width + i] = new wxButton(rightpanel, 10010 + (j * width + i));
-			traingrid2->Add(trainbtn2[j * width + i], 1, wxEXPAND);
+			trainbtn2[j * height + i] = new wxButton(rightpanel, 10000 + (width * height) + (j * height + i));
+			traingrid2->Add(trainbtn2[j * height + i], 1, wxEXPAND);
+			trainbtn2[j * height + i]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &cMain::OnTrainButtonClick, this);
 		}
 	}
 
+	// Add both side sizers into a new sizer 
 	wxBoxSizer* traingridboth = new wxBoxSizer(wxHORIZONTAL);
 	traingridboth->Add(traingrid1, 1, wxEXPAND | wxRIGHT, 20);
 	traingridboth->Add(traingrid2, 1, wxEXPAND | wxLEFT, 20);
 
+	wxBoxSizer* rightSideSizer = new wxBoxSizer(wxVERTICAL);
 
-	rightpanel->SetSizer(traingridboth);
-	traingridboth->Layout();
+	m_submit = new wxButton(rightpanel, 101, "Submit");
+
+	rightSideSizer->Add(traingridboth, 4, wxEXPAND | wxALL, 5);
+	rightSideSizer->Add(m_submit, 1, wxEXPAND | wxALL, 20);
+
+	// Assign this new sizer to the right side of the page
+	rightpanel->SetSizer(rightSideSizer);
+	rightSideSizer->Layout();
+
+
+
+
+
 
 
 	splittermain->SplitVertically(leftpanel, rightpanel);
@@ -168,3 +188,33 @@ void cMain::OnRadioBoxChange(wxCommandEvent& evt)
 	m_textctrl1->SetValue(text);
 }
 
+void cMain::OnTrainButtonClick(wxCommandEvent& evt)
+{
+	
+
+	/* The grid of buttons is layed out in this form, with the first item in the top left corner
+	*  and the numbers ascending down the columns		
+	* 
+	*	0	4	8
+	*	1	5	9
+	*	2	6	10
+	*	3	7	11
+	*/
+
+	// Finds x and y position of clicked button
+	int x = (evt.GetId() - 10000) / height;
+	int y = (evt.GetId() - 10000) % height;
+
+
+	std::string pos = std::to_string(x * height + y);
+	m_textctrl1->SetValue(pos);
+
+	if (trainbtn1[x * height + y]->Enable(true))
+	{
+		trainbtn1[x * height + y]->Enable(false);
+	}
+	/*else
+	{
+		trainbtn1[x * height + y]->Enable(false);
+	}*/
+}
