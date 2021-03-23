@@ -2,6 +2,7 @@
 #define MAIN_HEADER
 
 #include "wx/wx.h"
+#include <wx/tglbtn.h>
 
 class cMain : public wxFrame
 {
@@ -12,9 +13,12 @@ public:
 private:
 	void OnRadioBoxChange(wxCommandEvent& evt);
 	void OnTrainButtonClick(wxCommandEvent& evt);
+	void OnSubmitButtonClick(wxCommandEvent& evt);
 
 	int height = 8;
 	int width = 2;
+
+	int** trainArr;
 
 public:
 	
@@ -45,8 +49,8 @@ public:
 	wxListBox* m_timelist = nullptr;
 	wxStaticText* m_timetext = nullptr;
 
-	wxButton** trainbtn1 = nullptr;
-	wxButton** trainbtn2 = nullptr;
+	wxToggleButton** trainbtn1 = nullptr;
+	wxToggleButton** trainbtn2 = nullptr;
 
 	wxButton* m_submit = nullptr;
 

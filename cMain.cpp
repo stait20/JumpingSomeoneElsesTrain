@@ -1,4 +1,4 @@
-#include <string>
+﻿#include <string>
 #include <wx/splitter.h>
 #include "cMain.h"
 
@@ -8,6 +8,21 @@ wxEND_EVENT_TABLE()
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPoint(30, 30), wxDefaultSize)
 {
+
+	// Creates array to represent train
+	trainArr = new int* [height];
+	for (int i = 0; i < height; i++) {
+		trainArr[i] = new int[width * 2];
+	}
+
+	// Randomly decides if seats are booked or not
+	srand((unsigned int)time(NULL));
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width * 2; j++) {
+			trainArr[i][j] = rand() % 2;
+		}
+	}
+
 	/*  Split screen vertically into two equal sections. 
 	*   Things can be added to either rightpanel or leftpanel
 	*   depending on where they should be placed
@@ -46,6 +61,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(130, 140), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
 	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(130, 170), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
 
+	//m_adultcombo->Bind
+
 	// Create text placed next to comboboxes that informs what info should be entered in each box
 	m_adulttext = new wxStaticText(leftpanel, wxID_ANY, "Number of Adults:", wxPoint(10, 145), wxDefaultSize);
 	m_childtext = new wxStaticText(leftpanel, wxID_ANY, "Number of Children:", wxPoint(10, 175), wxDefaultSize);
@@ -63,8 +80,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 
 	// Create comboboxes for station selection
-	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 220), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
-	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 250), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
+	m_fromstation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 220), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
+	m_tostation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 250), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
 
 
 	// Text for Station selection
@@ -115,8 +132,10 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 
 	// Initiate button array and grid sizer to place buttons in
-	trainbtn1 = new wxButton*[width * height];
+	trainbtn1 = new wxToggleButton*[width * height];
 	wxGridSizer* traingrid1 = new wxGridSizer(height, width, 0, 0);
+
+
 
 	// Loop through the height and width
 	for (int i = 0; i < height; i++)
@@ -124,25 +143,38 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 		for (int j = 0; j < width; j++)
 		{
 			// Create new button placed into the array of buttons
-			trainbtn1[j * height + i] = new wxButton(rightpanel, 10000 + (j * height + i));
+			trainbtn1[j * height + i] = new wxToggleButton(rightpanel, 10000 + (j * height + i), wxEmptyString);
 			// Add new button into the grid sizer
 			traingrid1->Add(trainbtn1[j * height + i], 1, wxEXPAND);
 			// Execute OnTrainButtonClick when the button is clicked
-			trainbtn1[j * height + i]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &cMain::OnTrainButtonClick, this  );
+			trainbtn1[j * height + i]->Bind(wxEVT_TOGGLEBUTTON, &cMain::OnTrainButtonClick, this);
+			// Check if seat is booked, if so...
+			if (trainArr[i][j] == 1)
+			{
+				trainbtn1[j * height + i]->Enable(false);									// Disable button
+				trainbtn1[j * height + i]->SetBackgroundColour(wxColour(247, 55, 52, 120)); // Set background and foreground to red
+				trainbtn1[j * height + i]->SetForegroundColour(wxColour(247, 55, 52, 120));
+			}
 		}
 	}
 
 	// Repeat same process as previously with right side of train display
-	trainbtn2 = new wxButton * [width * height];
+	trainbtn2 = new wxToggleButton * [width * height];
 	wxGridSizer* traingrid2 = new wxGridSizer(height, width, 0, 0);
 
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			trainbtn2[j * height + i] = new wxButton(rightpanel, 10000 + (width * height) + (j * height + i));
+			trainbtn2[j * height + i] = new wxToggleButton(rightpanel, 10000 + (width * height) + (j * height + i), wxEmptyString);
 			traingrid2->Add(trainbtn2[j * height + i], 1, wxEXPAND);
-			trainbtn2[j * height + i]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &cMain::OnTrainButtonClick, this);
+			trainbtn2[j * height + i]->Bind(wxEVT_TOGGLEBUTTON, &cMain::OnTrainButtonClick, this);
+			if (trainArr[j + width - 1][i] == 1)
+			{
+				trainbtn2[j * height + i]->Enable(false);
+				trainbtn2[j * height + i]->SetBackgroundColour(wxColour(247, 55, 52, 120));
+				trainbtn2[j * height + i]->SetForegroundColour(wxColour(247, 55, 52, 120));
+			}
 		}
 	}
 
@@ -154,6 +186,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	wxBoxSizer* rightSideSizer = new wxBoxSizer(wxVERTICAL);
 
 	m_submit = new wxButton(rightpanel, 101, "Submit");
+	m_submit->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &cMain::OnSubmitButtonClick, this);
 
 	rightSideSizer->Add(traingridboth, 4, wxEXPAND | wxALL, 5);
 	rightSideSizer->Add(m_submit, 1, wxEXPAND | wxALL, 20);
@@ -162,14 +195,10 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	rightpanel->SetSizer(rightSideSizer);
 	rightSideSizer->Layout();
 
-
-
-
-
-
-
+	// Split the frame into the two panels
 	splittermain->SplitVertically(leftpanel, rightpanel);
 
+	// Set split panel sizer to the main sizer of the frame
 	this->SetSizer(sizermain);
 	sizermain->SetSizeHints(this);
 }
@@ -178,23 +207,35 @@ cMain::~cMain()
 {
 	delete[] trainbtn1;
 	delete[] trainbtn2;
+
+	for (int i = 0; i < height; ++i) {
+		delete[] trainArr[i];
+	}
+
+	delete[] trainArr;
 }
 
 
 // Temp function to display what radio button is selected
 void cMain::OnRadioBoxChange(wxCommandEvent& evt)
 {
-	wxString text = m_rad1->GetString(evt.GetSelection());
-	m_textctrl1->SetValue(text);
+	/*wxString text = m_rad1->GetString(evt.GetSelection());
+	m_textctrl1->SetValue(text);*/
+}
+
+void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
+{
+
 }
 
 void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 {
-	
+	int noPeople = (m_adultcombo->GetCurrentSelection()) + (m_childcombo->GetCurrentSelection());
+
 
 	/* The grid of buttons is layed out in this form, with the first item in the top left corner
-	*  and the numbers ascending down the columns		
-	* 
+	*  and the numbers ascending down the columns
+	*
 	*	0	4	8
 	*	1	5	9
 	*	2	6	10
@@ -206,15 +247,20 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 	int y = (evt.GetId() - 10000) % height;
 
 
-	std::string pos = std::to_string(x * height + y);
-	m_textctrl1->SetValue(pos);
+	std::string pos = std::to_string(noPeople);
+	wxString text = m_adultcombo->GetValue();
+	m_textctrl1->SetValue(text);
 
-	if (trainbtn1[x * height + y]->Enable(true))
+
+	/*if (trainArr[x][y] == 0)
 	{
 		trainbtn1[x * height + y]->Enable(false);
+		trainArr[x][y] = 1;
 	}
-	/*else
+	else if (trainArr[x][y] == 1)
 	{
-		trainbtn1[x * height + y]->Enable(false);
-	}*/
+		trainbtn1[x * height + y]->Enable(true);
+		trainArr[x][y] = 0;
+	}
+	*/
 }
