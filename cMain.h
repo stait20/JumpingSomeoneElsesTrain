@@ -3,6 +3,7 @@
 
 #include "wx/wx.h"
 #include <wx/tglbtn.h>
+#include "Train.h"
 
 class cMain : public wxFrame
 {

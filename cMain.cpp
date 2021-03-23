@@ -1,6 +1,7 @@
 ﻿#include <string>
 #include <wx/splitter.h>
 #include "cMain.h"
+#include <iostream>
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
 	EVT_RADIOBOX(100, OnRadioBoxChange)
@@ -9,19 +10,7 @@ wxEND_EVENT_TABLE()
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPoint(30, 30), wxDefaultSize)
 {
 
-	// Creates array to represent train
-	trainArr = new int* [height];
-	for (int i = 0; i < height; i++) {
-		trainArr[i] = new int[width * 2];
-	}
 
-	// Randomly decides if seats are booked or not
-	srand((unsigned int)time(NULL));
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width * 2; j++) {
-			trainArr[i][j] = rand() % 2;
-		}
-	}
 
 	/*  Split screen vertically into two equal sections. 
 	*   Things can be added to either rightpanel or leftpanel
@@ -135,8 +124,12 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	trainbtn1 = new wxToggleButton*[width * height];
 	wxGridSizer* traingrid1 = new wxGridSizer(height, width, 0, 0);
 
+	Train t;
 
+	int height = t.getHeight();
+	int width = t.getWidth();
 
+	
 	// Loop through the height and width
 	for (int i = 0; i < height; i++)
 	{
@@ -148,12 +141,20 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 			traingrid1->Add(trainbtn1[j * height + i], 1, wxEXPAND);
 			// Execute OnTrainButtonClick when the button is clicked
 			trainbtn1[j * height + i]->Bind(wxEVT_TOGGLEBUTTON, &cMain::OnTrainButtonClick, this);
-			// Check if seat is booked, if so...
-			if (trainArr[i][j] == 1)
+			// Check state of seat...
+			if (t.checkSeat(i, j) == 0)
 			{
+																							// If booked...
 				trainbtn1[j * height + i]->Enable(false);									// Disable button
 				trainbtn1[j * height + i]->SetBackgroundColour(wxColour(247, 55, 52, 120)); // Set background and foreground to red
 				trainbtn1[j * height + i]->SetForegroundColour(wxColour(247, 55, 52, 120));
+			}
+			else if (t.checkSeat(i, j) == 1)
+			{
+																							// If unavailable for social distancing...
+				trainbtn1[j * height + i]->Enable(false);									// Disable button
+				trainbtn1[j * height + i]->SetBackgroundColour(wxColour(255, 165, 0, 120));	// Set background and foreground to orange
+				trainbtn1[j * height + i]->SetForegroundColour(wxColour(255, 165, 0, 120));
 			}
 		}
 	}
@@ -169,11 +170,17 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 			trainbtn2[j * height + i] = new wxToggleButton(rightpanel, 10000 + (width * height) + (j * height + i), wxEmptyString);
 			traingrid2->Add(trainbtn2[j * height + i], 1, wxEXPAND);
 			trainbtn2[j * height + i]->Bind(wxEVT_TOGGLEBUTTON, &cMain::OnTrainButtonClick, this);
-			if (trainArr[j + width - 1][i] == 1)
+			if (t.checkSeat(i, j+width) == 0)
 			{
 				trainbtn2[j * height + i]->Enable(false);
 				trainbtn2[j * height + i]->SetBackgroundColour(wxColour(247, 55, 52, 120));
 				trainbtn2[j * height + i]->SetForegroundColour(wxColour(247, 55, 52, 120));
+			}
+			else if (t.checkSeat(i, j+width) == 1)
+			{
+				trainbtn2[j * height + i]->Enable(false);
+				trainbtn2[j * height + i]->SetBackgroundColour(wxColour(255, 165, 0, 120));
+				trainbtn2[j * height + i]->SetForegroundColour(wxColour(255, 165, 0, 120));
 			}
 		}
 	}
@@ -208,11 +215,7 @@ cMain::~cMain()
 	delete[] trainbtn1;
 	delete[] trainbtn2;
 
-	for (int i = 0; i < height; ++i) {
-		delete[] trainArr[i];
-	}
-
-	delete[] trainArr;
+	
 }
 
 
