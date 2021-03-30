@@ -15,7 +15,7 @@ Train::Train()
 	srand((unsigned int)time(NULL));
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width * 2; j++) {
-			if (rand() % 2 == 1)
+			if (rand() % 3 == 1)
 			{
 				trainArr[i][j] = Booked;
 			}

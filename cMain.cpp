@@ -47,8 +47,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	ticketsComboChoices.Add("5");
 
 	// Create both comboboxes for entering number of adults or children
-	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(130, 140), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
-	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(130, 170), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
+	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxPoint(130, 140), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
+	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxPoint(130, 170), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
 
 	//m_adultcombo->Bind
 
@@ -120,14 +120,18 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:", wxPoint(10, 320), wxDefaultSize);
 
 
+
+	
+
+	height = t.getHeight();
+	width = t.getWidth();
+
+
 	// Initiate button array and grid sizer to place buttons in
 	trainbtn1 = new wxToggleButton*[width * height];
 	wxGridSizer* traingrid1 = new wxGridSizer(height, width, 0, 0);
 
-	Train t;
-
-	int height = t.getHeight();
-	int width = t.getWidth();
+	
 
 	
 	// Loop through the height and width
@@ -233,6 +237,7 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 
 void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 {
+	// Find number of people being booked for
 	int noPeople = (m_adultcombo->GetCurrentSelection()) + (m_childcombo->GetCurrentSelection());
 
 
@@ -249,21 +254,73 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 	int x = (evt.GetId() - 10000) / height;
 	int y = (evt.GetId() - 10000) % height;
 
+	int value = x * height + y;
+
+	// Check if button is already in vector
+	std::vector<int>::iterator it = std::find(selected.begin(), selected.end(), value);
+
+	if (it != selected.end())
+	{
+		// Element found
+		selected.erase(it);
+		clicked--;
+	}
+	else
+	{
+		// Element not found
+		selected.push_back(value);
+		clicked++;
+	}
+
+	
 
 	std::string pos = std::to_string(noPeople);
-	wxString text = m_adultcombo->GetValue();
-	m_textctrl1->SetValue(text);
+	m_textctrl1->SetValue(pos);
 
+	
 
-	/*if (trainArr[x][y] == 0)
+	if (clicked == noPeople)
 	{
-		trainbtn1[x * height + y]->Enable(false);
-		trainArr[x][y] = 1;
+		// Disable all buttons
+		for (int i = 0; i < height*width; i++)
+		{
+			trainbtn1[i]->Enable(false);
+			trainbtn2[i]->Enable(false);
+		}
+		// Reenable buttons that are currently selected
+		for (int i = 0; i < selected.size(); i++)
+		{
+			// Checks which of the button array this specific seat is part of
+			if (selected[i] < height * width)
+			{
+				trainbtn1[selected[i]]->Enable(true);
+			}
+			else
+			{
+				trainbtn2[selected[i]-height*width]->Enable(true);
+			}
+		}
 	}
-	else if (trainArr[x][y] == 1)
+	else
 	{
-		trainbtn1[x * height + y]->Enable(true);
-		trainArr[x][y] = 0;
+		/* Will enable buttons when the seats selected is less than noPeople
+		*  This allows for the user to unselect a seat when they're at the max,
+		*  the other seats will enable again allowing them to make a new selection
+		*/
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width*2; j++)
+			{
+				if (j < width && t.checkSeat(i, j) == 2)
+				{
+					trainbtn1[j*height+i]->Enable(true);
+				}
+				else if (t.checkSeat(i, j) == 2)
+				{
+					trainbtn2[j*height+i-(width*height)]->Enable(true);
+				}
+			}
+		}
 	}
-	*/
+
 }

@@ -16,10 +16,15 @@ private:
 	void OnTrainButtonClick(wxCommandEvent& evt);
 	void OnSubmitButtonClick(wxCommandEvent& evt);
 
-	int height = 8;
-	int width = 2;
+	int width;
+	int height;
+
+	Train t;
 
 	int** trainArr;
+
+	int clicked = 0;
+	std::vector<int> selected;
 
 public:
 	
