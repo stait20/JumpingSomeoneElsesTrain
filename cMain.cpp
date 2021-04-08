@@ -1,7 +1,10 @@
 ﻿#include <string>
 #include <wx/splitter.h>
+#include <wx/textfile.h>
 #include "cMain.h"
 #include <iostream>
+#include <fstream>
+#include <vector>
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
 	EVT_RADIOBOX(100, OnRadioBoxChange)
@@ -62,13 +65,59 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	* external file and add them to list
 	*/
 
+	//wxArrayString stationsComboChoices;
+	//wxString root = wxGetCwd();
+	//wxString station = root + wxT("stationnames.txt");
+	//wxTextFile file;
+	//file.Open(station);
+	//int i;
+	//for (i = 0; i < file.GetCount(i); i++)
+	//{
+	//	wxString name1 = file.Getline(i);
+	//	stationsComboChoices.Insert(name1, i);
+	//}
+
 	wxArrayString stationsComboChoices;
-	stationsComboChoices.Add("Glasgow Central");
-	stationsComboChoices.Add("Crossmyloof");
-	stationsComboChoices.Add("Pollockshaws West");
+
+	std::ifstream file("stationnames.txt");
+	std::vector<std::string> stationnames;
+	std::string input;
+	while (file >> input)
+	{
+		stationnames.push_back(input);
+	}
+	 
+	//for (std::vector<std::string>::iterator it = stationnames.begin(); it != stationnames.end(); ++it)
+	//{
+    // 	stationsComboChoices.Add(it->c_str());
+	//}
+
+	
+	//for (size_t i = 0; i < stationnames.size(); ++i)
+	//{
+	//	stationsComboChoices.Append(stationnames[i].c_str());
+	//}
+
+	//for (std::vector<std::string>::iterator it = stationnames.begin(); it != stationnames.end(); ++it)
+	//{
+	//	wxString test45 = it->c_str();
+	//	stationsComboChoices.Insert(it->c_str(), it);
+	//}
+
+	//for (std::string stationnames : stationnames)
+	//{
+	//	std::cout << stationnames << "\n";
+	//}
+	
+	
+	//wxArrayString stationsComboChoices;
+	//stationsComboChoices.Add(stationnames);
+	//stationsComboChoices.Add("stationnames.txt");
+	//stationsComboChoices.Add("Pollockshaws West");
 
 
 	// Create comboboxes for station selection
+
 	m_fromstation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 220), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
 	m_tostation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 250), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
 
