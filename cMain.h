@@ -4,6 +4,9 @@
 #include "wx/wx.h"
 #include <wx/tglbtn.h>
 #include "Train.h"
+#include "Line.h"
+#include "Ticket.h"
+#include <vector>
 
 class cMain : public wxFrame
 {
@@ -12,19 +15,36 @@ public:
 	~cMain();
 
 private:
-	void OnRadioBoxChange(wxCommandEvent& evt);
 	void OnTrainButtonClick(wxCommandEvent& evt);
 	void OnSubmitButtonClick(wxCommandEvent& evt);
+	void OnTimeButtonClick(wxCommandEvent& evt);
+	void OnTimeNextButtonClick(wxCommandEvent& evt);
+	void OnTimePrevButtonClick(wxCommandEvent& evt);
+	void updateTrainButtons(Train t);
 
 	int width;
 	int height;
 
-	Train t;
+	std::vector<Train> trains;
 
-	int** trainArr;
+	int** trainArr;	
 
 	int clicked = 0;
 	std::vector<int> selected;
+
+	wxString day;
+	wxString month;
+	wxString year;
+
+	std::vector<std::string> line1 = { "Glasgow", "Edinburgh" };
+	std::vector<std::string> line2 = { "Edinburgh", "Stirling", "Inverness" };
+	std::vector<std::string> line3 = { "Inverness", "John O'Groats" };
+
+	std::vector<std::vector<std::string>> lines;
+
+	std::vector<std::string> route;
+
+	int pos;
 
 public:
 	
@@ -52,13 +72,24 @@ public:
 	wxComboBox* m_monthinput = nullptr;
 	wxComboBox* m_yearinput = nullptr;
 
+	wxButton* m_timebutton = nullptr;
+	wxButton* m_timenext = nullptr;
+	wxButton* m_timeprev = nullptr;
+
+	wxStaticText* m_journeytext1 = nullptr;
 	wxListBox* m_timelist = nullptr;
 	wxStaticText* m_timetext = nullptr;
 
 	wxToggleButton** trainbtn1 = nullptr;
 	wxToggleButton** trainbtn2 = nullptr;
 
+	wxStaticText* m_journeytext2 = nullptr;
+
 	wxButton* m_submit = nullptr;
+
+	wxBoxSizer* rightSideSizer;
+
+	wxMessageDialog* m_messagedialog = nullptr;
 
 	wxDECLARE_EVENT_TABLE();
 };

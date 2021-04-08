@@ -11,6 +11,7 @@ Train::Train()
 		trainArr[i] = new int[width * 2];
 	}
 
+
 	// Randomly decides if seats are booked or not
 	srand((unsigned int)time(NULL));
 	for (int i = 0; i < height; i++) {
