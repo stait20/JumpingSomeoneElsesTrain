@@ -26,6 +26,8 @@ private:
 	int clicked = 0;
 	std::vector<int> selected;
 
+	std::vector<std::vector<std::string>> linevecs;
+
 public:
 	
 	wxPanel* rightpanel = nullptr;

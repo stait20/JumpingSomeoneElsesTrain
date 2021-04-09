@@ -5,6 +5,9 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "LineSearch.h"
+#include "StationNames.h"
+#include <list>
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
 	EVT_RADIOBOX(100, OnRadioBoxChange)
@@ -77,25 +80,43 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	//	stationsComboChoices.Insert(name1, i);
 	//}
 
+	/*Calls vector "stationnames from 
+	StationNames.h header file and iterates 
+	through the vector adding the strings
+	to the ComboBox in the GUI
+	*/
 	wxArrayString stationsComboChoices;
-
-	std::ifstream file("stationnames.txt");
-	std::vector<std::string> stationnames;
-	std::string input;
-	while (file >> input)
+	for (size_t i = 0; i < stationnames.size(); ++i)
 	{
-		stationnames.push_back(input);
+		stationsComboChoices.Add(stationnames[i]);
 	}
-	 
-	//for (std::vector<std::string>::iterator it = stationnames.begin(); it != stationnames.end(); ++it)
+
+	//std::ifstream file;
+	//file.open("aberdeentoedinburgh.txt");
+	//std::vector < std::string> stationnames;
+	//std::string input = "Edi";
+	//if (!file)
 	//{
-    // 	stationsComboChoices.Add(it->c_str());
+	//	input = "no stations here";
+	//	stationsComboChoices.Add(input);
+	//}
+	//while (!file.eof())
+	//{
+	//	getline(file, input);
+	//	stationsComboChoices.Add(input);
+	//}
+	//file.close();
+	//while (file >> input)
+	//{
+	//	stationnames.push_back(input);
+	//	//stationsComboChoices.Add(input);
 	//}
 
+	//stationsComboChoices.Add(input);
 	
-	//for (size_t i = 0; i < stationnames.size(); ++i)
+	//for (std::string>::iterator it = stationnames.begin(); it != stationnames.end(); ++it)
 	//{
-	//	stationsComboChoices.Append(stationnames[i].c_str());
+	//	stationsComboChoices.Add(stationnames);
 	//}
 
 	//for (std::vector<std::string>::iterator it = stationnames.begin(); it != stationnames.end(); ++it)
@@ -109,12 +130,14 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	//	std::cout << stationnames << "\n";
 	//}
 	
-	
+	//std::string station = "Glasgow Central";
+
 	//wxArrayString stationsComboChoices;
 	//stationsComboChoices.Add(stationnames);
 	//stationsComboChoices.Add("stationnames.txt");
 	//stationsComboChoices.Add("Pollockshaws West");
-
+	//stationsComboChoices.Add(station);
+	
 
 	// Create comboboxes for station selection
 
@@ -261,6 +284,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	// Set split panel sizer to the main sizer of the frame
 	this->SetSizer(sizermain);
 	sizermain->SetSizeHints(this);
+
+
 }
 
 cMain::~cMain()
