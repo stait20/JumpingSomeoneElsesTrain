@@ -5,41 +5,31 @@
 
 Train::Train()
 {
-	// Creates 2D dynamic array to represent train
-	trainArr = new int* [height];
-	for (int i = 0; i < height; i++) {
-		trainArr[i] = new int[width * 2];
-	}
-
-
+	// Create temporary vector
+	std::vector<int> v;
+	
 	// Randomly decides if seats are booked or not
-	srand((unsigned int)time(NULL));
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width * 2; j++) {
 			if (rand() % 3 == 1)
 			{
-				trainArr[i][j] = Booked;
+				v.push_back(Booked);
 			}
 			else
 			{
-				trainArr[i][j] = Available;
+				v.push_back(Available);
 			}
 		}
+		// Adds temp vector to 2D train vector
+		trainArr.push_back(v);
+		// Clears temp vector so it can be used again
+		v.clear();
 	}
 	
 	// Runs function to add in unavailable seats
 	updateDistance();
 }
 
-Train::~Train()
-{
-	// Destructor for 2D dynamic array
-	for (int i = 0; i < height; ++i) {
-		delete[] trainArr[i];
-	}
-
-	delete[] trainArr;
-}
 
 void Train::updateDistance()
 {

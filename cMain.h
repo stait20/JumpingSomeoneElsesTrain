@@ -29,8 +29,8 @@ private:
 
 	int** trainArr;	
 
-	int clicked = 0;
-	std::vector<int> selected;
+	std::vector<int> clicked;
+	std::vector<std::vector<int>> selected;
 
 	wxString day;
 	wxString month;

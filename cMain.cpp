@@ -9,8 +9,8 @@ wxEND_EVENT_TABLE()
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPoint(30, 30), wxDefaultSize)
 {
-
-
+	// Seed random number generator
+	srand((unsigned int)time(NULL));
 
 	/*  Split screen vertically into two equal sections. 
 	*   Things can be added to either rightpanel or leftpanel
@@ -226,6 +226,7 @@ cMain::~cMain()
 
 void cMain::updateTrainButtons(Train t)
 {
+	// Updates train buttons to display correct info based on train object
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
@@ -246,11 +247,13 @@ void cMain::updateTrainButtons(Train t)
 			}
 			else if (t.checkSeat(i, j) == 2)
 			{
-				trainbtn1[j * height + i]->Enable(true);
-				trainbtn1[j * height + i]->SetBackgroundColour(wxNullColour);
+				// If available
+				trainbtn1[j * height + i]->Enable(true);						// Enable button
+				trainbtn1[j * height + i]->SetBackgroundColour(wxNullColour);	// Reset background and forground to default
 				trainbtn1[j * height + i]->SetForegroundColour(wxNullColour);
 			}
 
+			// Same method but for the 2nd train button array
 			if (t.checkSeat(i, j + width) == 0)
 			{
 				trainbtn2[j * height + i]->Enable(false);
@@ -269,6 +272,24 @@ void cMain::updateTrainButtons(Train t)
 				trainbtn2[j * height + i]->SetBackgroundColour(wxNullColour);
 				trainbtn2[j * height + i]->SetForegroundColour(wxNullColour);
 			}
+			trainbtn1[j * height + i]->SetValue(false);
+			trainbtn2[j * height + i]->SetValue(false);
+		}
+	}
+
+	int x, y;
+
+	for (int n : selected[pos])
+	{
+		x = n / height;
+		y = n % height;
+		if (n < width*height)
+		{
+			trainbtn1[x * height + y]->SetValue(true);
+		}
+		else 
+		{
+			trainbtn2[x * height + y - (height * width)]->SetValue(true);
 		}
 	}
 }
@@ -296,19 +317,23 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 
 void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 {	
+	// Get departure and arrival stations from GUI
 	wxString depStation = m_fromstation->GetValue();
 	wxString arrStation = m_tostation->GetValue();
 
+	// Find route vector 
 	route = find_route(lines, depStation.ToStdString(), arrStation.ToStdString());
 
+	selected.resize(route.size() - 1);
+	clicked.resize(route.size() - 1);
 
-
+	// Create vector of Train objects
 	for (int i = 0; i < route.size() - 1; i++)
 	{
 		trains.push_back(Train());
 	}
 	
-
+	// Enable next and previous button if more than 1 journey present
 	if (route.size() > 2)
 	{
 		m_timenext->Enable(true);
@@ -320,12 +345,14 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 		m_timeprev->Enable(false);
 	}
 
+	// Set initial values for pos and text boxes
 	pos = 0;
 	m_journeytext1->SetLabel(route[0] + "-" + route[1]);
 	m_journeytext2->SetLabel(route[0] + "-" + route[1]);
 	
 	updateTrainButtons(trains[0]);
 
+	// Reset sizer to center text
 	rightSideSizer->Layout();
 }
 
@@ -333,21 +360,28 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 
 void cMain::OnTimeNextButtonClick(wxCommandEvent& evt)
 {
+	// Check not in the last position
 	if (pos < route.size()-2)
 	{
+		// Increase position
 		pos++;
+		// Set labels to appropriate stage of journey
 		m_journeytext1->SetLabel(route[pos] + "-" + route[pos + 1]);
 		m_journeytext2->SetLabel(route[pos] + "-" + route[pos + 1]);
 
+
 		updateTrainButtons(trains[pos]);
 	}
+	// Reset sizer to center text
 	rightSideSizer->Layout();
 }
 
 void cMain::OnTimePrevButtonClick(wxCommandEvent& evt)
 {
+	// Check not in first position
 	if (pos > 0)
 	{
+		// Same as next button
 		pos--;
 		m_journeytext1->SetLabel(route[pos] + "-" + route[pos + 1]);
 		m_journeytext2->SetLabel(route[pos] + "-" + route[pos + 1]);
@@ -366,10 +400,10 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 	/* The grid of buttons is layed out in this form, with the first item in the top left corner
 	*  and the numbers ascending down the columns
 	*
-	*	0	4	8
-	*	1	5	9
-	*	2	6	10
-	*	3	7	11
+	*	0	4	8	12
+	*	1	5	9	13
+	*	2	6	10	14
+	*	3	7	11	15
 	*/
 
 	// Finds x and y position of clicked button
@@ -379,25 +413,22 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 	int value = x * height + y;
 
 	// Check if button is already in vector
-	std::vector<int>::iterator it = std::find(selected.begin(), selected.end(), value);
+	std::vector<int>::iterator it = std::find(selected[pos].begin(), selected[pos].end(), value);
 
-	if (it != selected.end())
+	if (it != selected[pos].end())
 	{
 		// Element found
-		selected.erase(it);
-		clicked--;
+		selected[pos].erase(it);
+		clicked[pos]--;
 	}
 	else
 	{
 		// Element not found
-		selected.push_back(value);
-		clicked++;
+		selected[pos].push_back(value);
+		clicked[pos]++;
 	}
 
-	std::string pos = std::to_string(noPeople);
-	m_textctrl1->SetValue(pos);
-
-	if (clicked == noPeople)
+	if (clicked[pos] == noPeople)
 	{
 		// Disable all buttons
 		for (int i = 0; i < height*width; i++)
@@ -406,16 +437,16 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 			trainbtn2[i]->Enable(false);
 		}
 		// Reenable buttons that are currently selected
-		for (int i = 0; i < selected.size(); i++)
+		for (int i = 0; i < selected[pos].size(); i++)
 		{
 			// Checks which of the button array this specific seat is part of
-			if (selected[i] < height * width)
+			if (selected[pos][i] < height * width)
 			{
-				trainbtn1[selected[i]]->Enable(true);
+				trainbtn1[selected[pos][i]]->Enable(true);
 			}
 			else
 			{
-				trainbtn2[selected[i]-height*width]->Enable(true);
+				trainbtn2[selected[pos][i]-height*width]->Enable(true);
 			}
 		}
 	}
@@ -425,19 +456,19 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 		*  This allows for the user to unselect a seat when they're at the max,
 		*  the other seats will enable again allowing them to make a new selection
 		*/
-		/*for (int i = 0; i < height; i++)
+		for (int i = 0; i < height; i++)
 		{
 			for (int j = 0; j < width*2; j++)
 			{
-				if (j < width && t.checkSeat(i, j) == 2)
+				if (j < width && trains[pos].checkSeat(i, j) == 2)
 				{
 					trainbtn1[j*height+i]->Enable(true);
 				}
-				else if (t.checkSeat(i, j) == 2)
+				else if (trains[pos].checkSeat(i, j) == 2)
 				{
 					trainbtn2[j*height+i-(width*height)]->Enable(true);
 				}
-			}*/
-		//}
+			}
+		}
 	}
 }
