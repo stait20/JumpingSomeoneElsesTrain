@@ -244,8 +244,16 @@ void cMain::updateTrainButtons(Train t)
 			}
 			else if (t.checkSeat(i, j) == 2)
 			{
-				// If available
-				trainbtn1[j * height + i]->Enable(true);						// Enable button
+				// If available, check if max buttons are already pressed
+				if (clicked[pos] == noPeople)
+				{
+					trainbtn1[j * height + i]->Enable(false);
+				}
+				else
+				{
+					trainbtn1[j * height + i]->Enable(true);
+				}					
+				// Remove colouring
 				trainbtn1[j * height + i]->SetBackgroundColour(wxNullColour);	// Reset background and forground to default
 				trainbtn1[j * height + i]->SetForegroundColour(wxNullColour);
 			}
@@ -265,7 +273,15 @@ void cMain::updateTrainButtons(Train t)
 			}
 			else if (t.checkSeat(i, j + width) == 2)
 			{
-				trainbtn2[j * height + i]->Enable(true);
+				if (clicked[pos] == noPeople)
+				{
+					trainbtn2[j * height + i]->Enable(false);
+				}
+				else 
+				{
+					trainbtn2[j * height + i]->Enable(true);
+				}
+
 				trainbtn2[j * height + i]->SetBackgroundColour(wxNullColour);
 				trainbtn2[j * height + i]->SetForegroundColour(wxNullColour);
 			}
@@ -285,12 +301,19 @@ void cMain::updateTrainButtons(Train t)
 			if (n < width*height)
 			{
 				trainbtn1[x * height + y]->SetValue(true);
+				trainbtn1[x * height + y]->Enable(true);
 			}
 			else 
 			{
 				trainbtn2[x * height + y - (height * width)]->SetValue(true);
+				trainbtn2[x * height + y - (height * width)]->Enable(true);
 			}
 		}
+	}
+
+	if (clicked[pos] == noPeople)
+	{
+
 	}
 }
 
@@ -368,6 +391,9 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	selected.resize(route.size() - 1);
 	clicked.resize(route.size() - 1);
 
+	// Find number of people being booked for
+	noPeople = (m_adultcombo->GetCurrentSelection()) + (m_childcombo->GetCurrentSelection());
+
 
 	// Enable next and previous button if more than 1 journey present
 	if (route.size() > 2)
@@ -386,7 +412,6 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	m_journeytext1->SetLabel(route[0] + "-" + route[1]);
 	m_journeytext2->SetLabel(route[0] + "-" + route[1]);
 	
-	//updateTrainButtons(trains[0]);
 
 	// Reset sizer to center text
 	rightSideSizer->Layout();
@@ -443,8 +468,7 @@ void cMain::OnTrainTimeClick(wxCommandEvent& evt)
 
 void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 {
-	// Find number of people being booked for
-	int noPeople = (m_adultcombo->GetCurrentSelection()) + (m_childcombo->GetCurrentSelection());
+	
 
 
 	/* The grid of buttons is layed out in this form, with the first item in the top left corner

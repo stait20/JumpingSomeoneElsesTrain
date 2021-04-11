@@ -45,6 +45,7 @@ private:
 	std::vector<std::string> route;
 
 	int pos;
+	int noPeople;
 
 public:
 	
