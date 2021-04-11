@@ -4,8 +4,8 @@
 #include "wx/wx.h"
 #include <wx/tglbtn.h>
 #include "Train.h"
-#include "Line.h"
 #include "Ticket.h"
+#include "Journey.h"
 #include <vector>
 
 class cMain : public wxFrame
@@ -20,17 +20,17 @@ private:
 	void OnTimeButtonClick(wxCommandEvent& evt);
 	void OnTimeNextButtonClick(wxCommandEvent& evt);
 	void OnTimePrevButtonClick(wxCommandEvent& evt);
+	void OnTrainTimeClick(wxCommandEvent& evt);
 	void updateTrainButtons(Train t);
 
 	int width;
 	int height;
 
-	std::vector<Train> trains;
-
 	int** trainArr;	
 
 	std::vector<int> clicked;
 	std::vector<std::vector<int>> selected;
+	std::vector<Journey> journeys;
 
 	wxString day;
 	wxString month;

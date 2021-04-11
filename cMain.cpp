@@ -132,14 +132,11 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	// Listbox to display available times based on 
 	m_timelist = new wxListBox(leftpanel, wxID_ANY, wxPoint(100, 390), wxSize(150, 200));
+	m_timelist->Bind(wxEVT_LISTBOX, &cMain::OnTrainTimeClick, this);
 
 	// Text for available times
 	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:", wxPoint(10, 390), wxDefaultSize);
 
-
-
-	Line l1(line1, 30);
-	Line l2(line2, 40);
 
 	lines.push_back(line1);
 	lines.push_back(line2);
@@ -279,17 +276,20 @@ void cMain::updateTrainButtons(Train t)
 
 	int x, y;
 
-	for (int n : selected[pos])
+	if (!selected.empty())
 	{
-		x = n / height;
-		y = n % height;
-		if (n < width*height)
+		for (int n : selected[pos])
 		{
-			trainbtn1[x * height + y]->SetValue(true);
-		}
-		else 
-		{
-			trainbtn2[x * height + y - (height * width)]->SetValue(true);
+			x = n / height;
+			y = n % height;
+			if (n < width*height)
+			{
+				trainbtn1[x * height + y]->SetValue(true);
+			}
+			else 
+			{
+				trainbtn2[x * height + y - (height * width)]->SetValue(true);
+			}
 		}
 	}
 }
@@ -312,27 +312,63 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 
 	m_messagedialog->SetMessage(tck.getRoute());
 	m_messagedialog->ShowModal();
+	evt.Skip();
 }
 
 
 void cMain::OnTimeButtonClick(wxCommandEvent& evt)
-{	
+{
+	// Clear listbox
+	m_timelist->Clear();
+
+	journeys.clear();
+
+	wxArrayString timesFormat;
+	std::vector<int> times;
+	int noOfTimes = 10;
+	
+	// Creates random times for train departures
+	for (int i = 0; i < noOfTimes; i++)
+	{
+		times.push_back(rand() % 900 + 420);
+		std::string s = "";
+		if (times[i] / 60 < 10)
+		{
+			s += "0";
+		}
+		s += std::to_string(times[i] / 60);
+		s += ":";
+		if (times[i] % 60 < 10)
+		{
+			s += "0";
+		}
+		s += std::to_string(times[i] % 60);
+		timesFormat.Add(s);
+	}
+
+	// Sorts with earliest time first
+	std::sort(times.begin(), times.end());
+	std::sort(timesFormat.begin(), timesFormat.end());
+
+	// Adds arraystring to listbox
+	m_timelist->InsertItems(timesFormat, 0);
+
 	// Get departure and arrival stations from GUI
 	wxString depStation = m_fromstation->GetValue();
 	wxString arrStation = m_tostation->GetValue();
 
-	// Find route vector 
-	route = find_route(lines, depStation.ToStdString(), arrStation.ToStdString());
+	// Creates vector of journeys, representing each time option
+	for (int i = 0; i < noOfTimes; i++)
+	{
+		journeys.push_back(Journey(depStation.ToStdString(), arrStation.ToStdString(), times[i]));
+	}
 
+	route = journeys[0].getRoute();
+	
 	selected.resize(route.size() - 1);
 	clicked.resize(route.size() - 1);
 
-	// Create vector of Train objects
-	for (int i = 0; i < route.size() - 1; i++)
-	{
-		trains.push_back(Train());
-	}
-	
+
 	// Enable next and previous button if more than 1 journey present
 	if (route.size() > 2)
 	{
@@ -350,10 +386,11 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	m_journeytext1->SetLabel(route[0] + "-" + route[1]);
 	m_journeytext2->SetLabel(route[0] + "-" + route[1]);
 	
-	updateTrainButtons(trains[0]);
+	//updateTrainButtons(trains[0]);
 
 	// Reset sizer to center text
 	rightSideSizer->Layout();
+	evt.Skip();
 }
 
 
@@ -370,10 +407,11 @@ void cMain::OnTimeNextButtonClick(wxCommandEvent& evt)
 		m_journeytext2->SetLabel(route[pos] + "-" + route[pos + 1]);
 
 
-		updateTrainButtons(trains[pos]);
+		updateTrainButtons(journeys[m_timelist->GetSelection()].getTrain(pos));
 	}
 	// Reset sizer to center text
 	rightSideSizer->Layout();
+	evt.Skip();
 }
 
 void cMain::OnTimePrevButtonClick(wxCommandEvent& evt)
@@ -386,9 +424,21 @@ void cMain::OnTimePrevButtonClick(wxCommandEvent& evt)
 		m_journeytext1->SetLabel(route[pos] + "-" + route[pos + 1]);
 		m_journeytext2->SetLabel(route[pos] + "-" + route[pos + 1]);
 
-		updateTrainButtons(trains[pos]);
+		updateTrainButtons(journeys[m_timelist->GetSelection()].getTrain(pos));
 	}
 	rightSideSizer->Layout();
+	evt.Skip();
+}
+
+void cMain::OnTrainTimeClick(wxCommandEvent& evt)
+{
+	selected.clear();
+	clicked.clear();
+	selected.resize(route.size() - 1);
+	clicked.resize(route.size() - 1);
+	updateTrainButtons(journeys[m_timelist->GetSelection()].getTrain(0));
+
+
 }
 
 void cMain::OnTrainButtonClick(wxCommandEvent& evt)
@@ -460,15 +510,16 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 		{
 			for (int j = 0; j < width*2; j++)
 			{
-				if (j < width && trains[pos].checkSeat(i, j) == 2)
+				if (j < width && journeys[m_timelist->GetSelection()].getTrain(pos).checkSeat(i, j) == 2)
 				{
 					trainbtn1[j*height+i]->Enable(true);
 				}
-				else if (trains[pos].checkSeat(i, j) == 2)
+				else if (journeys[m_timelist->GetSelection()].getTrain(pos).checkSeat(i, j) == 2)
 				{
 					trainbtn2[j*height+i-(width*height)]->Enable(true);
 				}
 			}
 		}
 	}
+	evt.Skip();
 }

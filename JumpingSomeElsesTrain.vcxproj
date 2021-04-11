@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClInclude Include="cApp.h" />
     <ClInclude Include="cMain.h" />
-    <ClInclude Include="Line.h" />
+    <ClInclude Include="Journey.h" />
     <ClInclude Include="LineSearch.h" />
     <ClInclude Include="Ticket.h" />
     <ClInclude Include="Train.h" />
@@ -29,7 +29,7 @@
   <ItemGroup>
     <ClCompile Include="cApp.cpp" />
     <ClCompile Include="cMain.cpp" />
-    <ClCompile Include="Line.cpp" />
+    <ClCompile Include="Journey.cpp" />
     <ClCompile Include="LineSearch.cpp" />
     <ClCompile Include="Ticket.cpp" />
     <ClCompile Include="Train.cpp" />
