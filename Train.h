@@ -1,10 +1,12 @@
 #ifndef TRAIN_HEADER
 #define TRAIN_HEADER
 
+#include <vector>
+
 class Train 
 {
 private:
-	int** trainArr;
+	std::vector<std::vector<int>> trainArr;
 	int height = 8;
 	int width = 2;
 
@@ -15,7 +17,7 @@ public:
 		Booked, Unavailable, Available
 	};
 	Train();
-	virtual ~Train();
+	virtual ~Train() {}
 	int getHeight() { return height; }
 	int getWidth() { return width; }
 	void updateDistance();

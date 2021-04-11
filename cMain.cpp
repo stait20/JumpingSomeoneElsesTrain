@@ -1,16 +1,16 @@
 ﻿#include <string>
 #include <wx/splitter.h>
 #include "cMain.h"
-#include <iostream>
+#include "LineSearch.h"
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
-	EVT_RADIOBOX(100, OnRadioBoxChange)
+
 wxEND_EVENT_TABLE()
 
 cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPoint(30, 30), wxDefaultSize)
 {
-
-
+	// Seed random number generator
+	srand((unsigned int)time(NULL));
 
 	/*  Split screen vertically into two equal sections. 
 	*   Things can be added to either rightpanel or leftpanel
@@ -63,9 +63,12 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	*/
 
 	wxArrayString stationsComboChoices;
-	stationsComboChoices.Add("Glasgow Central");
-	stationsComboChoices.Add("Crossmyloof");
-	stationsComboChoices.Add("Pollockshaws West");
+	stationsComboChoices.Add("Glasgow");
+	stationsComboChoices.Add("Edinburgh");
+	stationsComboChoices.Add("Stirling");
+	stationsComboChoices.Add("Inverness");
+	stationsComboChoices.Add("John O'Groats");
+
 
 
 	// Create comboboxes for station selection
@@ -102,9 +105,11 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	}
 
 	// Combo Boxes to input day, month and year
-	m_dayinput = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 280), wxDefaultSize, dayComboChoices, wxCB_DROPDOWN);
-	m_monthinput = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(150, 280), wxDefaultSize, monthComboChoices, wxCB_DROPDOWN);
-	m_yearinput = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(250, 280), wxDefaultSize, yearComboChoices, wxCB_DROPDOWN);
+	m_dayinput = new wxComboBox(leftpanel, 200, wxEmptyString, wxPoint(50, 280), wxDefaultSize, dayComboChoices, wxCB_DROPDOWN);
+	m_monthinput = new wxComboBox(leftpanel, 201, wxEmptyString, wxPoint(150, 280), wxDefaultSize, monthComboChoices, wxCB_DROPDOWN);
+	m_yearinput = new wxComboBox(leftpanel, 202, wxEmptyString, wxPoint(250, 280), wxDefaultSize, yearComboChoices, wxCB_DROPDOWN);
+
+	
 
 
 	// Text for date input
@@ -112,20 +117,37 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_monthtext = new wxStaticText(leftpanel, wxID_ANY, "Month", wxPoint(120, 280), wxDefaultSize);
 	m_yeartext = new wxStaticText(leftpanel, wxID_ANY, "Year", wxPoint(200, 280), wxDefaultSize);
 
+	m_timebutton = new wxButton(leftpanel, wxID_ANY, "Get Times", wxPoint(10, 320), wxDefaultSize);
+	m_timebutton->Bind(wxEVT_BUTTON, &cMain::OnTimeButtonClick, this);
+
+	m_timenext = new wxButton(leftpanel, wxID_ANY, "Next Train", wxPoint(100, 320), wxDefaultSize);
+	m_timenext->Enable(false);
+	m_timenext->Bind(wxEVT_BUTTON, &cMain::OnTimeNextButtonClick, this);
+
+	m_timeprev = new wxButton(leftpanel, wxID_ANY, "Previous Train", wxPoint(190, 320), wxDefaultSize);
+	m_timeprev->Enable(false);
+	m_timeprev->Bind(wxEVT_BUTTON, &cMain::OnTimePrevButtonClick, this);
+
+	m_journeytext1 = new wxStaticText(leftpanel, wxID_ANY, wxEmptyString, wxPoint(30, 350), wxDefaultSize);
 
 	// Listbox to display available times based on 
-	m_timelist = new wxListBox(leftpanel, wxID_ANY, wxPoint(100, 320), wxSize(150, 200));
+	m_timelist = new wxListBox(leftpanel, wxID_ANY, wxPoint(100, 390), wxSize(150, 200));
+	m_timelist->Bind(wxEVT_LISTBOX, &cMain::OnTrainTimeClick, this);
 
 	// Text for available times
-	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:", wxPoint(10, 320), wxDefaultSize);
+	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:", wxPoint(10, 390), wxDefaultSize);
 
 
-
+	lines.push_back(line1);
+	lines.push_back(line2);
+	lines.push_back(line3);
 	
+	Train temp;
+	height = temp.getHeight();
+	width = temp.getWidth();
 
-	height = t.getHeight();
-	width = t.getWidth();
 
+	m_journeytext2 = new wxStaticText(rightpanel, wxID_ANY, "HELLO!");
 
 	// Initiate button array and grid sizer to place buttons in
 	trainbtn1 = new wxToggleButton*[width * height];
@@ -145,21 +167,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 			traingrid1->Add(trainbtn1[j * height + i], 1, wxEXPAND);
 			// Execute OnTrainButtonClick when the button is clicked
 			trainbtn1[j * height + i]->Bind(wxEVT_TOGGLEBUTTON, &cMain::OnTrainButtonClick, this);
-			// Check state of seat...
-			if (t.checkSeat(i, j) == 0)
-			{
-																							// If booked...
-				trainbtn1[j * height + i]->Enable(false);									// Disable button
-				trainbtn1[j * height + i]->SetBackgroundColour(wxColour(247, 55, 52, 120)); // Set background and foreground to red
-				trainbtn1[j * height + i]->SetForegroundColour(wxColour(247, 55, 52, 120));
-			}
-			else if (t.checkSeat(i, j) == 1)
-			{
-																							// If unavailable for social distancing...
-				trainbtn1[j * height + i]->Enable(false);									// Disable button
-				trainbtn1[j * height + i]->SetBackgroundColour(wxColour(255, 165, 0, 120));	// Set background and foreground to orange
-				trainbtn1[j * height + i]->SetForegroundColour(wxColour(255, 165, 0, 120));
-			}
+			trainbtn1[j * height + i]->Enable(false);
 		}
 	}
 
@@ -174,18 +182,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 			trainbtn2[j * height + i] = new wxToggleButton(rightpanel, 10000 + (width * height) + (j * height + i), wxEmptyString);
 			traingrid2->Add(trainbtn2[j * height + i], 1, wxEXPAND);
 			trainbtn2[j * height + i]->Bind(wxEVT_TOGGLEBUTTON, &cMain::OnTrainButtonClick, this);
-			if (t.checkSeat(i, j+width) == 0)
-			{
-				trainbtn2[j * height + i]->Enable(false);
-				trainbtn2[j * height + i]->SetBackgroundColour(wxColour(247, 55, 52, 120));
-				trainbtn2[j * height + i]->SetForegroundColour(wxColour(247, 55, 52, 120));
-			}
-			else if (t.checkSeat(i, j+width) == 1)
-			{
-				trainbtn2[j * height + i]->Enable(false);
-				trainbtn2[j * height + i]->SetBackgroundColour(wxColour(255, 165, 0, 120));
-				trainbtn2[j * height + i]->SetForegroundColour(wxColour(255, 165, 0, 120));
-			}
+			trainbtn2[j * height + i]->Enable(false);
 		}
 	}
 
@@ -194,12 +191,13 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	traingridboth->Add(traingrid1, 1, wxEXPAND | wxRIGHT, 20);
 	traingridboth->Add(traingrid2, 1, wxEXPAND | wxLEFT, 20);
 
-	wxBoxSizer* rightSideSizer = new wxBoxSizer(wxVERTICAL);
+	rightSideSizer = new wxBoxSizer(wxVERTICAL);
 
 	m_submit = new wxButton(rightpanel, 101, "Submit");
 	m_submit->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &cMain::OnSubmitButtonClick, this);
 
-	rightSideSizer->Add(traingridboth, 4, wxEXPAND | wxALL, 5);
+	rightSideSizer->Add(m_journeytext2, 0, wxALIGN_CENTER | wxTOP, 5);
+	rightSideSizer->Add(traingridboth, 4, wxEXPAND | wxALL, 2);
 	rightSideSizer->Add(m_submit, 1, wxEXPAND | wxALL, 20);
 
 	// Assign this new sizer to the right side of the page
@@ -212,42 +210,274 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	// Set split panel sizer to the main sizer of the frame
 	this->SetSizer(sizermain);
 	sizermain->SetSizeHints(this);
+
+	m_messagedialog = new wxMessageDialog(this, "hello", "Hi", wxOK);
 }
 
 cMain::~cMain()
 {
 	delete[] trainbtn1;
 	delete[] trainbtn2;
-
-	
 }
 
 
-// Temp function to display what radio button is selected
-void cMain::OnRadioBoxChange(wxCommandEvent& evt)
+void cMain::updateTrainButtons(Train t)
 {
-	/*wxString text = m_rad1->GetString(evt.GetSelection());
-	m_textctrl1->SetValue(text);*/
+	// Updates train buttons to display correct info based on train object
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			if (t.checkSeat(i, j) == 0)
+			{
+				// If booked...
+				trainbtn1[j * height + i]->Enable(false);									// Disable button
+				trainbtn1[j * height + i]->SetBackgroundColour(wxColour(247, 55, 52, 120)); // Set background and foreground to red
+				trainbtn1[j * height + i]->SetForegroundColour(wxColour(247, 55, 52, 120));
+			}
+			else if (t.checkSeat(i, j) == 1)
+			{
+				// If unavailable for social distancing...
+				trainbtn1[j * height + i]->Enable(false);									// Disable button
+				trainbtn1[j * height + i]->SetBackgroundColour(wxColour(255, 165, 0, 120));	// Set background and foreground to orange
+				trainbtn1[j * height + i]->SetForegroundColour(wxColour(255, 165, 0, 120));
+			}
+			else if (t.checkSeat(i, j) == 2)
+			{
+				// If available, check if max buttons are already pressed
+				if (clicked[pos] == noPeople)
+				{
+					trainbtn1[j * height + i]->Enable(false);
+				}
+				else
+				{
+					trainbtn1[j * height + i]->Enable(true);
+				}					
+				// Remove colouring
+				trainbtn1[j * height + i]->SetBackgroundColour(wxNullColour);	// Reset background and forground to default
+				trainbtn1[j * height + i]->SetForegroundColour(wxNullColour);
+			}
+
+			// Same method but for the 2nd train button array
+			if (t.checkSeat(i, j + width) == 0)
+			{
+				trainbtn2[j * height + i]->Enable(false);
+				trainbtn2[j * height + i]->SetBackgroundColour(wxColour(247, 55, 52, 120));
+				trainbtn2[j * height + i]->SetForegroundColour(wxColour(247, 55, 52, 120));
+			}
+			else if (t.checkSeat(i, j + width) == 1)
+			{
+				trainbtn2[j * height + i]->Enable(false);
+				trainbtn2[j * height + i]->SetBackgroundColour(wxColour(255, 165, 0, 120));
+				trainbtn2[j * height + i]->SetForegroundColour(wxColour(255, 165, 0, 120));
+			}
+			else if (t.checkSeat(i, j + width) == 2)
+			{
+				if (clicked[pos] == noPeople)
+				{
+					trainbtn2[j * height + i]->Enable(false);
+				}
+				else 
+				{
+					trainbtn2[j * height + i]->Enable(true);
+				}
+
+				trainbtn2[j * height + i]->SetBackgroundColour(wxNullColour);
+				trainbtn2[j * height + i]->SetForegroundColour(wxNullColour);
+			}
+			trainbtn1[j * height + i]->SetValue(false);
+			trainbtn2[j * height + i]->SetValue(false);
+		}
+	}
+
+	int x, y;
+
+	if (!selected.empty())
+	{
+		for (int n : selected[pos])
+		{
+			x = n / height;
+			y = n % height;
+			if (n < width*height)
+			{
+				trainbtn1[x * height + y]->SetValue(true);
+				trainbtn1[x * height + y]->Enable(true);
+			}
+			else 
+			{
+				trainbtn2[x * height + y - (height * width)]->SetValue(true);
+				trainbtn2[x * height + y - (height * width)]->Enable(true);
+			}
+		}
+	}
+
+	if (clicked[pos] == noPeople)
+	{
+
+	}
 }
 
 void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 {
+	int ticketType = m_rad1->GetSelection();
+	
+	int noOfChildren = m_childcombo->GetCurrentSelection();
+	int noOfAdults = m_adultcombo->GetCurrentSelection();
+
+	
+
+	wxString depStation = m_fromstation->GetValue();
+	wxString arrStation = m_tostation->GetValue();
+
+	m_textctrl1->SetValue(depStation);
+
+	Ticket tck(depStation.ToStdString(), arrStation.ToStdString(), noOfChildren, noOfAdults, ticketType, 100);
+
+	m_messagedialog->SetMessage(tck.getRoute());
+	m_messagedialog->ShowModal();
+	evt.Skip();
+}
+
+
+void cMain::OnTimeButtonClick(wxCommandEvent& evt)
+{
+	// Clear listbox
+	m_timelist->Clear();
+
+	journeys.clear();
+
+	wxArrayString timesFormat;
+	std::vector<int> times;
+	int noOfTimes = 10;
+	
+	// Creates random times for train departures
+	for (int i = 0; i < noOfTimes; i++)
+	{
+		times.push_back(rand() % 900 + 420);
+		std::string s = "";
+		if (times[i] / 60 < 10)
+		{
+			s += "0";
+		}
+		s += std::to_string(times[i] / 60);
+		s += ":";
+		if (times[i] % 60 < 10)
+		{
+			s += "0";
+		}
+		s += std::to_string(times[i] % 60);
+		timesFormat.Add(s);
+	}
+
+	// Sorts with earliest time first
+	std::sort(times.begin(), times.end());
+	std::sort(timesFormat.begin(), timesFormat.end());
+
+	// Adds arraystring to listbox
+	m_timelist->InsertItems(timesFormat, 0);
+
+	// Get departure and arrival stations from GUI
+	wxString depStation = m_fromstation->GetValue();
+	wxString arrStation = m_tostation->GetValue();
+
+	// Creates vector of journeys, representing each time option
+	for (int i = 0; i < noOfTimes; i++)
+	{
+		journeys.push_back(Journey(depStation.ToStdString(), arrStation.ToStdString(), times[i]));
+	}
+
+	route = journeys[0].getRoute();
+	
+	selected.resize(route.size() - 1);
+	clicked.resize(route.size() - 1);
+
+	// Find number of people being booked for
+	noPeople = (m_adultcombo->GetCurrentSelection()) + (m_childcombo->GetCurrentSelection());
+
+
+	// Enable next and previous button if more than 1 journey present
+	if (route.size() > 2)
+	{
+		m_timenext->Enable(true);
+		m_timeprev->Enable(true);
+	}
+	else 
+	{
+		m_timenext->Enable(false);
+		m_timeprev->Enable(false);
+	}
+
+	// Set initial values for pos and text boxes
+	pos = 0;
+	m_journeytext1->SetLabel(route[0] + "-" + route[1]);
+	m_journeytext2->SetLabel(route[0] + "-" + route[1]);
+	
+
+	// Reset sizer to center text
+	rightSideSizer->Layout();
+	evt.Skip();
+}
+
+
+
+void cMain::OnTimeNextButtonClick(wxCommandEvent& evt)
+{
+	// Check not in the last position
+	if (pos < route.size()-2)
+	{
+		// Increase position
+		pos++;
+		// Set labels to appropriate stage of journey
+		m_journeytext1->SetLabel(route[pos] + "-" + route[pos + 1]);
+		m_journeytext2->SetLabel(route[pos] + "-" + route[pos + 1]);
+
+
+		updateTrainButtons(journeys[m_timelist->GetSelection()].getTrain(pos));
+	}
+	// Reset sizer to center text
+	rightSideSizer->Layout();
+	evt.Skip();
+}
+
+void cMain::OnTimePrevButtonClick(wxCommandEvent& evt)
+{
+	// Check not in first position
+	if (pos > 0)
+	{
+		// Same as next button
+		pos--;
+		m_journeytext1->SetLabel(route[pos] + "-" + route[pos + 1]);
+		m_journeytext2->SetLabel(route[pos] + "-" + route[pos + 1]);
+
+		updateTrainButtons(journeys[m_timelist->GetSelection()].getTrain(pos));
+	}
+	rightSideSizer->Layout();
+	evt.Skip();
+}
+
+void cMain::OnTrainTimeClick(wxCommandEvent& evt)
+{
+	selected.clear();
+	clicked.clear();
+	selected.resize(route.size() - 1);
+	clicked.resize(route.size() - 1);
+	updateTrainButtons(journeys[m_timelist->GetSelection()].getTrain(0));
+
 
 }
 
 void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 {
-	// Find number of people being booked for
-	int noPeople = (m_adultcombo->GetCurrentSelection()) + (m_childcombo->GetCurrentSelection());
+	
 
 
 	/* The grid of buttons is layed out in this form, with the first item in the top left corner
 	*  and the numbers ascending down the columns
 	*
-	*	0	4	8
-	*	1	5	9
-	*	2	6	10
-	*	3	7	11
+	*	0	4	8	12
+	*	1	5	9	13
+	*	2	6	10	14
+	*	3	7	11	15
 	*/
 
 	// Finds x and y position of clicked button
@@ -257,29 +487,22 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 	int value = x * height + y;
 
 	// Check if button is already in vector
-	std::vector<int>::iterator it = std::find(selected.begin(), selected.end(), value);
+	std::vector<int>::iterator it = std::find(selected[pos].begin(), selected[pos].end(), value);
 
-	if (it != selected.end())
+	if (it != selected[pos].end())
 	{
 		// Element found
-		selected.erase(it);
-		clicked--;
+		selected[pos].erase(it);
+		clicked[pos]--;
 	}
 	else
 	{
 		// Element not found
-		selected.push_back(value);
-		clicked++;
+		selected[pos].push_back(value);
+		clicked[pos]++;
 	}
 
-	
-
-	std::string pos = std::to_string(noPeople);
-	m_textctrl1->SetValue(pos);
-
-	
-
-	if (clicked == noPeople)
+	if (clicked[pos] == noPeople)
 	{
 		// Disable all buttons
 		for (int i = 0; i < height*width; i++)
@@ -288,16 +511,16 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 			trainbtn2[i]->Enable(false);
 		}
 		// Reenable buttons that are currently selected
-		for (int i = 0; i < selected.size(); i++)
+		for (int i = 0; i < selected[pos].size(); i++)
 		{
 			// Checks which of the button array this specific seat is part of
-			if (selected[i] < height * width)
+			if (selected[pos][i] < height * width)
 			{
-				trainbtn1[selected[i]]->Enable(true);
+				trainbtn1[selected[pos][i]]->Enable(true);
 			}
 			else
 			{
-				trainbtn2[selected[i]-height*width]->Enable(true);
+				trainbtn2[selected[pos][i]-height*width]->Enable(true);
 			}
 		}
 	}
@@ -311,16 +534,16 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 		{
 			for (int j = 0; j < width*2; j++)
 			{
-				if (j < width && t.checkSeat(i, j) == 2)
+				if (j < width && journeys[m_timelist->GetSelection()].getTrain(pos).checkSeat(i, j) == 2)
 				{
 					trainbtn1[j*height+i]->Enable(true);
 				}
-				else if (t.checkSeat(i, j) == 2)
+				else if (journeys[m_timelist->GetSelection()].getTrain(pos).checkSeat(i, j) == 2)
 				{
 					trainbtn2[j*height+i-(width*height)]->Enable(true);
 				}
 			}
 		}
 	}
-
+	evt.Skip();
 }
