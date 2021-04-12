@@ -421,24 +421,18 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 
 	route = journeys[0].getRoute();
 	
+	// Reset selected and clicked for new journey
+	selected.clear();
+	clicked.clear();
 	selected.resize(route.size() - 1);
 	clicked.resize(route.size() - 1);
 
 	// Find number of people being booked for
 	noPeople = (m_adultcombo->GetCurrentSelection()) + (m_childcombo->GetCurrentSelection());
 
-
-	// Enable next and previous button if more than 1 journey present
-	if (route.size() > 2)
-	{
-		m_timenext->Enable(true);
-		m_timeprev->Enable(true);
-	}
-	else 
-	{
-		m_timenext->Enable(false);
-		m_timeprev->Enable(false);
-	}
+	// Disable next and prev buttons until a new time is selected
+	m_timenext->Enable(false);
+	m_timeprev->Enable(false);
 
 	// Set initial values for pos and text boxes
 	pos = 0;
@@ -494,6 +488,18 @@ void cMain::OnTrainTimeClick(wxCommandEvent& evt)
 	clicked.clear();
 	selected.resize(route.size() - 1);
 	clicked.resize(route.size() - 1);
+
+	// Enable next and previous button if more than 1 journey present and a time selection has been made
+	if (route.size() > 2 && m_timelist->GetSelection() != wxNOT_FOUND)
+	{
+		m_timenext->Enable(true);
+		m_timeprev->Enable(true);
+	}
+	else
+	{
+		m_timenext->Enable(false);
+		m_timeprev->Enable(false);
+	}
 	updateTrainButtons(journeys[m_timelist->GetSelection()].getTrain(0));
 
 
