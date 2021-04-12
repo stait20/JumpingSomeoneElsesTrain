@@ -327,19 +327,46 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 {
 	int ticketType = m_rad1->GetSelection();
 	
-	int noOfChildren = m_childcombo->GetCurrentSelection();
-	int noOfAdults = m_adultcombo->GetCurrentSelection();
+	//int noOfChildren = m_childcombo->GetCurrentSelection();
+	//int noOfAdults = m_adultcombo->GetCurrentSelection();
 
+	std::string noOfChildren = (m_childcombo->GetValue()).ToStdString();
+	std::string noOfAdults = (m_adultcombo->GetValue()).ToStdString();
 	
 
-	wxString depStation = m_fromstation->GetValue();
-	wxString arrStation = m_tostation->GetValue();
+	std::string depStation = (m_fromstation->GetValue()).ToStdString();
+	std::string arrStation = (m_tostation->GetValue()).ToStdString();
 
 	m_textctrl1->SetValue(depStation);
 
-	Ticket tck(depStation.ToStdString(), arrStation.ToStdString(), noOfChildren, noOfAdults, ticketType, 100);
+	std::string changeover;
+	for (std::vector<std::string>::iterator t = route.begin(); t != route.end(); ++t)
+	{
+		if (t != route.begin() && t != route.end() - 1)
+		{
+			changeover += *t + ", ";
+		}
+	}
 
-	m_messagedialog->SetMessage(tck.getRoute());
+	//Ticket tck(depStation.ToStdString(), arrStation.ToStdString(), To_String(noOfChildren), noOfAdults, ticketType, 100);
+
+	std::string BookingConfirm = "Booking Confirmation \n";
+    BookingConfirm += "\n Departing from: ";
+    BookingConfirm += depStation ;
+	BookingConfirm += "\n Arriving at: ";
+	BookingConfirm += arrStation;
+	BookingConfirm += "\n Adults: ";
+	BookingConfirm += noOfAdults;
+	BookingConfirm += "\n Children: ";
+	BookingConfirm += noOfChildren;
+	BookingConfirm += "\n Changeover: ";
+	BookingConfirm += changeover;
+
+	//std::string BookingConfirm +=
+		//("Booking Confirmation" +="\n" + "Departing from: " + depStation + "Arriving at: " + arrStation +
+		//"\n" + "Adults: " + noOfAdults + "Children" + noOfChildren);
+
+	m_messagedialog->SetMessage(BookingConfirm);
 	m_messagedialog->ShowModal();
 	evt.Skip();
 }

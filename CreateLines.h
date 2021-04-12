@@ -15,6 +15,7 @@ std::vector<std::vector<std::string>> CreateLines()
 	std::vector<std::string> L7 = { "Glasgow","Fort William" };
 	std::vector<std::string> L8 = { "Glasgow","Carlisle" };
 	std::vector<std::string> L9 = { "Edinburgh","Carlisle" };
+	std::vector<std::string> L10 = { "Glasgow","Edinburgh" };
 
 	std::vector<std::vector<std::string>> LinesVec;
 
@@ -27,6 +28,7 @@ std::vector<std::vector<std::string>> CreateLines()
 	LinesVec.push_back(L7);
 	LinesVec.push_back(L8);
 	LinesVec.push_back(L9);
+	LinesVec.push_back(L10);
 
 	return LinesVec;
 
