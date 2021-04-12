@@ -57,29 +57,12 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxPoint(130, 140), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
 	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxPoint(130, 170), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
 
-	//m_adultcombo->Bind
 
 	// Create text placed next to comboboxes that informs what info should be entered in each box
 	m_adulttext = new wxStaticText(leftpanel, wxID_ANY, "Number of Adults:", wxPoint(10, 145), wxDefaultSize);
 	m_childtext = new wxStaticText(leftpanel, wxID_ANY, "Number of Children:", wxPoint(10, 175), wxDefaultSize);
 
 
-	/* Array for storing station names
-	* Eventually will read stations from
-	* external file and add them to list
-	*/
-
-	//wxArrayString stationsComboChoices;
-	//wxString root = wxGetCwd();
-	//wxString station = root + wxT("stationnames.txt");
-	//wxTextFile file;
-	//file.Open(station);
-	//int i;
-	//for (i = 0; i < file.GetCount(i); i++)
-	//{
-	//	wxString name1 = file.Getline(i);
-	//	stationsComboChoices.Insert(name1, i);
-	//}
 
 	/*Calls vector "stationnames from 
 	StationNames.h header file and iterates 
@@ -92,53 +75,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 		stationsComboChoices.Add(stationnames[i]);
 	}
 
-	//std::ifstream file;
-	//file.open("aberdeentoedinburgh.txt");
-	//std::vector < std::string> stationnames;
-	//std::string input = "Edi";
-	//if (!file)
-	//{
-	//	input = "no stations here";
-	//	stationsComboChoices.Add(input);
-	//}
-	//while (!file.eof())
-	//{
-	//	getline(file, input);
-	//	stationsComboChoices.Add(input);
-	//}
-	//file.close();
-	//while (file >> input)
-	//{
-	//	stationnames.push_back(input);
-	//	//stationsComboChoices.Add(input);
-	//}
 
-	//stationsComboChoices.Add(input);
-	
-	//for (std::string>::iterator it = stationnames.begin(); it != stationnames.end(); ++it)
-	//{
-	//	stationsComboChoices.Add(stationnames);
-	//}
-
-	//for (std::vector<std::string>::iterator it = stationnames.begin(); it != stationnames.end(); ++it)
-	//{
-	//	wxString test45 = it->c_str();
-	//	stationsComboChoices.Insert(it->c_str(), it);
-	//}
-
-	//for (std::string stationnames : stationnames)
-	//{
-	//	std::cout << stationnames << "\n";
-	//}
-	
-	//std::string station = "Glasgow Central";
-
-	//wxArrayString stationsComboChoices;
-	//stationsComboChoices.Add(stationnames);
-	//stationsComboChoices.Add("stationnames.txt");
-	//stationsComboChoices.Add("Pollockshaws West");
-	//stationsComboChoices.Add(station);
-	
 
 	// Create comboboxes for station selection
 
