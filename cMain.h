@@ -51,9 +51,6 @@ public:
 	wxPanel* rightpanel = nullptr;
 	wxPanel* leftpanel = nullptr;
 
-	wxRadioBox* m_rad1 = nullptr;
-	wxTextCtrl* m_textctrl1 = nullptr;
-
 	wxComboBox* m_adultcombo = nullptr;
 	wxComboBox* m_childcombo = nullptr;
 	wxStaticText* m_adulttext = nullptr;
