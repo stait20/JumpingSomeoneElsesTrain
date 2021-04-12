@@ -6,6 +6,7 @@
 #include "Train.h"
 #include "Ticket.h"
 #include "Journey.h"
+
 #include <vector>
 
 class cMain : public wxFrame
@@ -36,9 +37,7 @@ private:
 	wxString month;
 	wxString year;
 
-	std::vector<std::string> line1 = { "Glasgow", "Edinburgh" };
-	std::vector<std::string> line2 = { "Edinburgh", "Stirling", "Inverness" };
-	std::vector<std::string> line3 = { "Inverness", "John O'Groats" };
+
 
 	std::vector<std::vector<std::string>> lines;
 
@@ -46,8 +45,6 @@ private:
 
 	int pos;
 	int noPeople;
-
-	std::vector <std::vector <std::string>> LinesVec = Line();
 
 public:
 	

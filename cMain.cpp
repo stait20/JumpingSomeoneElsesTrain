@@ -7,7 +7,7 @@
 #include <vector>
 #include "LineSearch.h"
 #include "StationNames.h"
-#include "Lines.h"
+#include "CreateLines.h"
 #include <list>
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
@@ -18,6 +18,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 {
 	// Seed random number generator
 	srand((unsigned int)time(NULL));
+
+	lines = CreateLines();
 
 	/*  Split screen vertically into two equal sections. 
 	*   Things can be added to either rightpanel or leftpanel
@@ -146,10 +148,6 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:", wxPoint(10, 390), wxDefaultSize);
 
 
-	lines.push_back(line1);
-	lines.push_back(line2);
-	lines.push_back(line3);
-	
 	Train temp;
 	height = temp.getHeight();
 	width = temp.getWidth();
@@ -391,7 +389,7 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	// Creates vector of journeys, representing each time option
 	for (int i = 0; i < noOfTimes; i++)
 	{
-		journeys.push_back(Journey(depStation.ToStdString(), arrStation.ToStdString(), times[i]));
+		journeys.push_back(Journey(lines, depStation.ToStdString(), arrStation.ToStdString(), times[i]));
 	}
 
 	route = journeys[0].getRoute();

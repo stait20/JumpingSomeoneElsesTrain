@@ -33,10 +33,10 @@
     <ClInclude Include="Journey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lines.h">
+    <ClInclude Include="StationNames.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StationNames.h">
+    <ClInclude Include="CreateLines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

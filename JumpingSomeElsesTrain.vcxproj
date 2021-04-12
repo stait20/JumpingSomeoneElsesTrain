@@ -24,7 +24,7 @@
     <ClInclude Include="Journey.h" />
     <ClInclude Include="LineSearch.h" />
     <ClInclude Include="Ticket.h" />
-    <ClInclude Include="Lines.h" />
+    <ClInclude Include="CreateLines.h" />
     <ClInclude Include="StationNames.h" />
     <ClInclude Include="Train.h" />
   </ItemGroup>

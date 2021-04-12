@@ -13,7 +13,7 @@ private:
 	int depTime;
 
 public:
-	Journey(std::string, std::string, int);
+	Journey(std::vector<std::vector<std::string>>, std::string, std::string, int);
 	std::string displayJourney();
 	std::vector<std::string> getRoute() { return route; }
 	Train getTrain(int);
