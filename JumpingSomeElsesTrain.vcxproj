@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="cApp.h" />
     <ClInclude Include="cMain.h" />
+    <ClInclude Include="Lines.h" />
+    <ClInclude Include="StationNames.h" />
     <ClInclude Include="Train.h" />
   </ItemGroup>
   <ItemGroup>

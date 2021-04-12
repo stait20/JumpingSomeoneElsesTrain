@@ -4,6 +4,7 @@
 #include "wx/wx.h"
 #include <wx/tglbtn.h>
 #include "Train.h"
+#include "Lines.h"
 
 class cMain : public wxFrame
 {
@@ -26,7 +27,7 @@ private:
 	int clicked = 0;
 	std::vector<int> selected;
 
-	std::vector<std::vector<std::string>> linevecs;
+	std::vector <std::vector <std::string>> LinesVec = Line();
 
 public:
 	

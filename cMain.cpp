@@ -7,6 +7,7 @@
 #include <vector>
 #include "LineSearch.h"
 #include "StationNames.h"
+#include "Lines.h"
 #include <list>
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
