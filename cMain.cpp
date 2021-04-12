@@ -333,11 +333,9 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 	std::string noOfChildren = (m_childcombo->GetValue()).ToStdString();
 	std::string noOfAdults = (m_adultcombo->GetValue()).ToStdString();
 	
-
+	std::string traveldate = (m_dayinput->GetValue()).ToStdString() + "/" + (m_monthinput->GetValue()).ToStdString() + "/" + (m_yearinput->GetValue()).ToStdString();
 	std::string depStation = (m_fromstation->GetValue()).ToStdString();
 	std::string arrStation = (m_tostation->GetValue()).ToStdString();
-
-	m_textctrl1->SetValue(depStation);
 
 	std::string changeover;
 	for (std::vector<std::string>::iterator t = route.begin(); t != route.end(); ++t)
@@ -351,6 +349,8 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 	//Ticket tck(depStation.ToStdString(), arrStation.ToStdString(), To_String(noOfChildren), noOfAdults, ticketType, 100);
 
 	std::string BookingConfirm = "Booking Confirmation \n";
+	BookingConfirm += "\n Departure Date: ";
+	BookingConfirm += traveldate;
     BookingConfirm += "\n Departing from: ";
     BookingConfirm += depStation ;
 	BookingConfirm += "\n Arriving at: ";
