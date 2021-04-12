@@ -47,6 +47,8 @@ private:
 	int pos;
 	int noPeople;
 
+	std::vector <std::vector <std::string>> LinesVec = Line();
+
 public:
 	
 	wxPanel* rightpanel = nullptr;

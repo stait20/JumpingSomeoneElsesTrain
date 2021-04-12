@@ -1,7 +1,14 @@
 ﻿#include <string>
 #include <wx/splitter.h>
+#include <wx/textfile.h>
 #include "cMain.h"
+#include <iostream>
+#include <fstream>
+#include <vector>
 #include "LineSearch.h"
+#include "StationNames.h"
+#include "Lines.h"
+#include <list>
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
 
@@ -50,28 +57,29 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxPoint(130, 140), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
 	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxPoint(130, 170), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
 
-	//m_adultcombo->Bind
 
 	// Create text placed next to comboboxes that informs what info should be entered in each box
 	m_adulttext = new wxStaticText(leftpanel, wxID_ANY, "Number of Adults:", wxPoint(10, 145), wxDefaultSize);
 	m_childtext = new wxStaticText(leftpanel, wxID_ANY, "Number of Children:", wxPoint(10, 175), wxDefaultSize);
 
 
-	/* Array for storing station names
-	* Eventually will read stations from
-	* external file and add them to list
-	*/
 
+	/*Calls vector "stationnames from 
+	StationNames.h header file and iterates 
+	through the vector adding the strings
+	to the ComboBox in the GUI
+	*/
 	wxArrayString stationsComboChoices;
-	stationsComboChoices.Add("Glasgow");
-	stationsComboChoices.Add("Edinburgh");
-	stationsComboChoices.Add("Stirling");
-	stationsComboChoices.Add("Inverness");
-	stationsComboChoices.Add("John O'Groats");
+	for (size_t i = 0; i < stationnames.size(); ++i)
+	{
+		stationsComboChoices.Add(stationnames[i]);
+	}
+
 
 
 
 	// Create comboboxes for station selection
+
 	m_fromstation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 220), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
 	m_tostation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 250), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
 

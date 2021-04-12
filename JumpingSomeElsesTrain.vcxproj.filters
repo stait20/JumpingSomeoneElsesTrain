@@ -33,6 +33,12 @@
     <ClInclude Include="Journey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Lines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StationNames.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cApp.cpp">
