@@ -21,6 +21,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	lines = CreateLines();
 
+
+
 	/*  Split screen vertically into two equal sections. 
 	*   Things can be added to either rightpanel or leftpanel
 	*   depending on where they should be placed
@@ -35,16 +37,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	leftpanel = new wxPanel(splittermain, wxID_ANY);
 	rightpanel = new wxPanel(splittermain, wxID_ANY);
 
-	// Options to be used for text box put into a wxArrayString
-	wxArrayString radioChoices;
-	radioChoices.Add("Single");
-	radioChoices.Add("Return");
-
-	// Create radio buttons
-	m_rad1 = new wxRadioBox(leftpanel, 100, "Select one of the options", wxPoint(10, 10), wxDefaultSize, radioChoices, 2, wxRA_VERTICAL);
-
-	// Temp text box to show selection
-	m_textctrl1 = new wxTextCtrl(leftpanel, wxID_ANY, m_rad1->GetString(m_rad1->GetSelection()), wxPoint(10, 100), wxSize(140, wxDefaultCoord));
+	wxBoxSizer* leftSideSizer = new wxBoxSizer(wxVERTICAL);
 
 	// Options for number of adults or children
 	wxArrayString ticketsComboChoices;
@@ -56,14 +49,32 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	ticketsComboChoices.Add("5");
 
 	// Create both comboboxes for entering number of adults or children
-	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxPoint(130, 140), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
-	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxPoint(130, 170), wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
-
+	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
+	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
 
 	// Create text placed next to comboboxes that informs what info should be entered in each box
-	m_adulttext = new wxStaticText(leftpanel, wxID_ANY, "Number of Adults:", wxPoint(10, 145), wxDefaultSize);
-	m_childtext = new wxStaticText(leftpanel, wxID_ANY, "Number of Children:", wxPoint(10, 175), wxDefaultSize);
+	m_adulttext = new wxStaticText(leftpanel, wxID_ANY, "Number of Adults:");
+	m_childtext = new wxStaticText(leftpanel, wxID_ANY, "Number of Children:");
 
+
+
+	wxBoxSizer* adultSizer = new wxBoxSizer(wxHORIZONTAL);
+	adultSizer->Add(m_adulttext, 0, wxALL, 2);
+	adultSizer->Add(m_adultcombo, 0, wxALL, 2);
+	
+	leftSideSizer->Add(adultSizer, 0, wxALL, 5);
+
+	wxBoxSizer* childSizer = new wxBoxSizer(wxHORIZONTAL);
+	childSizer->Add(m_childtext, 0, wxALL, 2);
+	childSizer->Add(m_childcombo, 0, wxALL, 2);
+
+	leftSideSizer->Add(childSizer, 0, wxALL, 2);
+
+
+	wxStaticText* dummy1 = new wxStaticText(leftpanel, wxID_ANY, "");
+	wxBoxSizer* DummySizer1 = new wxBoxSizer(wxHORIZONTAL);
+	DummySizer1->Add(dummy1, 0);
+	leftSideSizer->Add(DummySizer1, 0, wxTOP, 5);
 
 
 	/*Calls vector "stationnames from 
@@ -82,13 +93,31 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	// Create comboboxes for station selection
 
-	m_fromstation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 220), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
-	m_tostation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxPoint(50, 250), wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
+	m_fromstation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
+	m_tostation = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, stationsComboChoices, wxCB_DROPDOWN);
 
 
 	// Text for Station selection
-	m_fromtext = new wxStaticText(leftpanel, wxID_ANY, "From:", wxPoint(10, 225), wxDefaultSize);
-	m_fromtext = new wxStaticText(leftpanel, wxID_ANY, "To:", wxPoint(10, 255), wxDefaultSize);
+	m_fromtext = new wxStaticText(leftpanel, wxID_ANY, "From:");
+	m_totext = new wxStaticText(leftpanel, wxID_ANY, "To:");
+
+	wxBoxSizer* FromSizer = new wxBoxSizer(wxHORIZONTAL);
+	FromSizer->Add(m_fromtext, 0, wxALL, 2);
+	FromSizer->Add(m_fromstation, 0, wxALL, 2);
+
+	leftSideSizer->Add(FromSizer, 0, wxALL, 5);
+
+	wxBoxSizer* ToSizer = new wxBoxSizer(wxHORIZONTAL);
+	ToSizer->Add(m_totext, 0, wxALL, 2);
+	ToSizer->Add(m_tostation, 0, wxALL, 2);
+
+	leftSideSizer->Add(ToSizer, 0, wxALL, 2);
+
+	wxStaticText* dummy2 = new wxStaticText(leftpanel, wxID_ANY, "");
+	wxBoxSizer* DummySizer2 = new wxBoxSizer(wxHORIZONTAL);
+	DummySizer2->Add(dummy2, 0);
+	leftSideSizer->Add(DummySizer2, 0, wxTOP, 5);
+
 
 
 	/* Loops for creating arrays for day, month and year choices.
@@ -115,37 +144,65 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	}
 
 	// Combo Boxes to input day, month and year
-	m_dayinput = new wxComboBox(leftpanel, 200, wxEmptyString, wxPoint(50, 280), wxDefaultSize, dayComboChoices, wxCB_DROPDOWN);
-	m_monthinput = new wxComboBox(leftpanel, 201, wxEmptyString, wxPoint(150, 280), wxDefaultSize, monthComboChoices, wxCB_DROPDOWN);
-	m_yearinput = new wxComboBox(leftpanel, 202, wxEmptyString, wxPoint(250, 280), wxDefaultSize, yearComboChoices, wxCB_DROPDOWN);
+	m_dayinput = new wxComboBox(leftpanel, 200, wxEmptyString, wxDefaultPosition, wxDefaultSize, dayComboChoices, wxCB_DROPDOWN);
+	m_monthinput = new wxComboBox(leftpanel, 201, wxEmptyString, wxDefaultPosition, wxDefaultSize, monthComboChoices, wxCB_DROPDOWN);
+	m_yearinput = new wxComboBox(leftpanel, 202, wxEmptyString, wxDefaultPosition, wxDefaultSize, yearComboChoices, wxCB_DROPDOWN);
 
 	
-
-
 	// Text for date input
-	m_whendaytext = new wxStaticText(leftpanel, wxID_ANY, "When: Day", wxPoint(10, 280), wxDefaultSize);
-	m_monthtext = new wxStaticText(leftpanel, wxID_ANY, "Month", wxPoint(120, 280), wxDefaultSize);
-	m_yeartext = new wxStaticText(leftpanel, wxID_ANY, "Year", wxPoint(200, 280), wxDefaultSize);
+	m_whendaytext = new wxStaticText(leftpanel, wxID_ANY, "When: Day:");
+	m_monthtext = new wxStaticText(leftpanel, wxID_ANY, "Month:");
+	m_yeartext = new wxStaticText(leftpanel, wxID_ANY, "Year:");
 
-	m_timebutton = new wxButton(leftpanel, wxID_ANY, "Get Times", wxPoint(10, 320), wxDefaultSize);
+
+	wxBoxSizer* DateSizer = new wxBoxSizer(wxHORIZONTAL);
+	DateSizer->Add(m_whendaytext, 0, wxALL, 2);
+	DateSizer->Add(m_dayinput, 0, wxRIGHT, 20);
+	DateSizer->Add(m_monthtext, 0, wxRIGHT, 2);
+	DateSizer->Add(m_monthinput, 0, wxRIGHT, 20);
+	DateSizer->Add(m_yeartext, 0, wxRIGHT, 2);
+	DateSizer->Add(m_yearinput, 0);
+
+	leftSideSizer->Add(DateSizer, 0);
+
+
+	m_timebutton = new wxButton(leftpanel, wxID_ANY, "Get Times");
 	m_timebutton->Bind(wxEVT_BUTTON, &cMain::OnTimeButtonClick, this);
-
-	m_timenext = new wxButton(leftpanel, wxID_ANY, "Next Train", wxPoint(100, 320), wxDefaultSize);
-	m_timenext->Enable(false);
-	m_timenext->Bind(wxEVT_BUTTON, &cMain::OnTimeNextButtonClick, this);
-
-	m_timeprev = new wxButton(leftpanel, wxID_ANY, "Previous Train", wxPoint(190, 320), wxDefaultSize);
+	
+	m_timeprev = new wxButton(leftpanel, wxID_ANY, "Previous Train");
 	m_timeprev->Enable(false);
 	m_timeprev->Bind(wxEVT_BUTTON, &cMain::OnTimePrevButtonClick, this);
 
-	m_journeytext1 = new wxStaticText(leftpanel, wxID_ANY, wxEmptyString, wxPoint(30, 350), wxDefaultSize);
+	m_timenext = new wxButton(leftpanel, wxID_ANY, "Next Train");
+	m_timenext->Enable(false);
+	m_timenext->Bind(wxEVT_BUTTON, &cMain::OnTimeNextButtonClick, this);
+
+
+	wxBoxSizer* TimeButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
+
+	TimeButtonsSizer->Add(m_timebutton, 0, wxLEFT, 2);
+	TimeButtonsSizer->Add(m_timeprev, 1, wxLEFT, 20);
+	TimeButtonsSizer->Add(m_timenext, 1);
+
+	leftSideSizer->Add(TimeButtonsSizer, 0, wxALL, 10);
+
+	m_journeytext1 = new wxStaticText(leftpanel, wxID_ANY, wxEmptyString);
+
+	leftSideSizer->Add(m_journeytext1, 0, wxALIGN_CENTRE_HORIZONTAL | wxBOTTOM, 10);
 
 	// Listbox to display available times based on 
-	m_timelist = new wxListBox(leftpanel, wxID_ANY, wxPoint(100, 390), wxSize(150, 200));
+	m_timelist = new wxListBox(leftpanel,  wxID_ANY, wxDefaultPosition, wxSize(50, 160) );
 	m_timelist->Bind(wxEVT_LISTBOX, &cMain::OnTrainTimeClick, this);
 
 	// Text for available times
-	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:", wxPoint(10, 390), wxDefaultSize);
+	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:");
+
+	wxBoxSizer* TimeListSizer = new wxBoxSizer(wxHORIZONTAL);
+
+	TimeListSizer->Add(m_timetext, 1, wxLEFT, 2);
+	TimeListSizer->Add(m_timelist, 1, wxLEFT, 2);
+
+	leftSideSizer->Add(TimeListSizer, 1, wxALL, 10);
 
 
 	Train temp;
@@ -209,6 +266,9 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	// Assign this new sizer to the right side of the page
 	rightpanel->SetSizer(rightSideSizer);
 	rightSideSizer->Layout();
+
+	leftpanel->SetSizer(leftSideSizer);
+	leftSideSizer->Layout();
 
 	// Split the frame into the two panels
 	splittermain->SplitVertically(leftpanel, rightpanel);
@@ -325,10 +385,9 @@ void cMain::updateTrainButtons(Train t)
 
 void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 {
-	int ticketType = m_rad1->GetSelection();
-	
-	//int noOfChildren = m_childcombo->GetCurrentSelection();
-	//int noOfAdults = m_adultcombo->GetCurrentSelection();
+
+	int noOfChildren = m_childcombo->GetCurrentSelection();
+	int noOfAdults = m_adultcombo->GetCurrentSelection();
 
 	std::string noOfChildren = (m_childcombo->GetValue()).ToStdString();
 	std::string noOfAdults = (m_adultcombo->GetValue()).ToStdString();
