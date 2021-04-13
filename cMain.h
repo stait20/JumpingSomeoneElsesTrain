@@ -78,6 +78,8 @@ public:
 	wxStaticText* m_journeytext1 = nullptr;
 	wxListBox* m_timelist = nullptr;
 	wxStaticText* m_timetext = nullptr;
+	
+	wxStaticText* m_explaintext = nullptr;
 
 	wxToggleButton** trainbtn1 = nullptr;
 	wxToggleButton** trainbtn2 = nullptr;

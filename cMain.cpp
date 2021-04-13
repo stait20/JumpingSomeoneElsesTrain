@@ -49,8 +49,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	ticketsComboChoices.Add("5");
 
 	// Create both comboboxes for entering number of adults or children
-	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
-	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
+	m_adultcombo = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
+	m_childcombo = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, ticketsComboChoices, wxCB_DROPDOWN);
 
 	// Create text placed next to comboboxes that informs what info should be entered in each box
 	m_adulttext = new wxStaticText(leftpanel, wxID_ANY, "Number of Adults:");
@@ -68,7 +68,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	childSizer->Add(m_childtext, 0, wxALL, 2);
 	childSizer->Add(m_childcombo, 0, wxALL, 2);
 
-	leftSideSizer->Add(childSizer, 0, wxALL, 2);
+	leftSideSizer->Add(childSizer, 0, wxALL, 5);
 
 
 	wxStaticText* dummy1 = new wxStaticText(leftpanel, wxID_ANY, "");
@@ -163,7 +163,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	DateSizer->Add(m_yeartext, 0, wxRIGHT, 2);
 	DateSizer->Add(m_yearinput, 0);
 
-	leftSideSizer->Add(DateSizer, 0);
+	leftSideSizer->Add(DateSizer, 0, wxALL, 5);
 
 
 	m_timebutton = new wxButton(leftpanel, wxID_ANY, "Get Times");
@@ -188,7 +188,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	m_journeytext1 = new wxStaticText(leftpanel, wxID_ANY, wxEmptyString);
 
-	leftSideSizer->Add(m_journeytext1, 0, wxALIGN_CENTRE_HORIZONTAL | wxBOTTOM, 10);
+	leftSideSizer->Add(m_journeytext1, 0,  wxALL, 7);
 
 	// Listbox to display available times based on 
 	m_timelist = new wxListBox(leftpanel,  wxID_ANY, wxDefaultPosition, wxSize(50, 160) );
@@ -202,8 +202,13 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	TimeListSizer->Add(m_timetext, 1, wxLEFT, 2);
 	TimeListSizer->Add(m_timelist, 1, wxLEFT, 2);
 
-	leftSideSizer->Add(TimeListSizer, 1, wxALL, 10);
+	leftSideSizer->Add(TimeListSizer, 1, wxALL, 5);
 
+	std::string explain = "On the train diagram, red seats represent seats that have\nalready been booked, while orange seats represent seats that\nare unavailable for booking due to COVID restrictions";
+							
+	m_explaintext = new wxStaticText(leftpanel, wxID_ANY, explain);
+
+	leftSideSizer->Add(m_explaintext, 1, wxALL, 7);
 
 	Train temp;
 	height = temp.getHeight();
@@ -385,7 +390,7 @@ void cMain::updateTrainButtons(Train t)
 
 void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 {
-
+	// Get info from combo boxes
 	std::string noOfChildren = (m_childcombo->GetValue()).ToStdString();
 	std::string noOfAdults = (m_adultcombo->GetValue()).ToStdString();
 	
@@ -393,7 +398,8 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 	std::string depStation = (m_fromstation->GetValue()).ToStdString();
 	std::string arrStation = (m_tostation->GetValue()).ToStdString();
 
-	std::string changeover;
+	// Find changover stations from route vector and add to string
+	std::string changeover = "";
 	for (std::vector<std::string>::iterator t = route.begin(); t != route.end(); ++t)
 	{
 		if (t != route.begin() && t != route.end() - 1)
@@ -402,25 +408,21 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 		}
 	}
 
-	//Ticket tck(depStation.ToStdString(), arrStation.ToStdString(), To_String(noOfChildren), noOfAdults, ticketType, 100);
+	// If changeover is empty...
+	if (changeover == "")
+	{
+		// Set to display no changovers
+		changeover = "No changeover required";
+	}
+	else
+	{
+		// Otherwise remove final comma from string
+		changeover = changeover.substr(0, changeover.size() - 2);
+	}
 
-	std::string BookingConfirm = "Booking Confirmation \n";
-	BookingConfirm += "\n Departure Date: ";
-	BookingConfirm += traveldate;
-    BookingConfirm += "\n Departing from: ";
-    BookingConfirm += depStation ;
-	BookingConfirm += "\n Arriving at: ";
-	BookingConfirm += arrStation;
-	BookingConfirm += "\n Adults: ";
-	BookingConfirm += noOfAdults;
-	BookingConfirm += "\n Children: ";
-	BookingConfirm += noOfChildren;
-	BookingConfirm += "\n Changeover: ";
-	BookingConfirm += changeover;
 
-	//std::string BookingConfirm +=
-		//("Booking Confirmation" +="\n" + "Departing from: " + depStation + "Arriving at: " + arrStation +
-		//"\n" + "Adults: " + noOfAdults + "Children" + noOfChildren);
+	std::string BookingConfirm = std::string("Booking Confirmation\nDeparting from: ") + depStation + std::string("\nArriving at: ") + 
+								arrStation + std::string("\nAdults: ") + noOfAdults + std::string("\nChildren: ") + noOfChildren + std::string("\nChangover: ") + changeover;
 
 	m_messagedialog->SetMessage(BookingConfirm);
 	m_messagedialog->ShowModal();
@@ -434,6 +436,36 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	m_timelist->Clear();
 
 	journeys.clear();
+
+	// Find number of people being booked for
+	noPeople = (m_adultcombo->GetCurrentSelection()) + (m_childcombo->GetCurrentSelection());
+
+	// Validate adult and child input
+	if (m_adultcombo->GetValue() == wxEmptyString || m_childcombo->GetValue() == wxEmptyString)
+	{
+		m_messagedialog->SetMessage("Error: No value for adult and child tickets selected");
+		m_messagedialog->ShowModal();
+		return;
+	}
+
+	// Get departure and arrival stations from GUI
+	wxString depStation = m_fromstation->GetValue();
+	wxString arrStation = m_tostation->GetValue();
+
+	// Validate station input
+	if (depStation == wxEmptyString || arrStation == wxEmptyString)
+	{
+		m_messagedialog->SetMessage("Error: Arrival or departure station not selected");
+		m_messagedialog->ShowModal();
+		return;
+	}
+
+	if (m_dayinput->GetValue() == wxEmptyString || m_monthinput->GetValue() == wxEmptyString || m_yearinput->GetValue() == wxEmptyString)
+	{
+		m_messagedialog->SetMessage("Error: Date input not selected");
+		m_messagedialog->ShowModal();
+		return;
+	}
 
 	wxArrayString timesFormat;
 	std::vector<int> times;
@@ -465,10 +497,6 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	// Adds arraystring to listbox
 	m_timelist->InsertItems(timesFormat, 0);
 
-	// Get departure and arrival stations from GUI
-	wxString depStation = m_fromstation->GetValue();
-	wxString arrStation = m_tostation->GetValue();
-
 	// Creates vector of journeys, representing each time option
 	for (int i = 0; i < noOfTimes; i++)
 	{
@@ -482,9 +510,6 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	clicked.clear();
 	selected.resize(route.size() - 1);
 	clicked.resize(route.size() - 1);
-
-	// Find number of people being booked for
-	noPeople = (m_adultcombo->GetCurrentSelection()) + (m_childcombo->GetCurrentSelection());
 
 	// Disable next and prev buttons until a new time is selected
 	m_timenext->Enable(false);
@@ -563,9 +588,6 @@ void cMain::OnTrainTimeClick(wxCommandEvent& evt)
 
 void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 {
-	
-
-
 	/* The grid of buttons is layed out in this form, with the first item in the top left corner
 	*  and the numbers ascending down the columns
 	*
