@@ -386,9 +386,6 @@ void cMain::updateTrainButtons(Train t)
 void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 {
 
-	int noOfChildren = m_childcombo->GetCurrentSelection();
-	int noOfAdults = m_adultcombo->GetCurrentSelection();
-
 	std::string noOfChildren = (m_childcombo->GetValue()).ToStdString();
 	std::string noOfAdults = (m_adultcombo->GetValue()).ToStdString();
 	
