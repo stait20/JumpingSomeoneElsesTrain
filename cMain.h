@@ -16,6 +16,7 @@ public:
 	~cMain();
 
 private:
+	void wxOnMenuEvent(wxCommandEvent& evt);
 	void OnTrainButtonClick(wxCommandEvent& evt);
 	void OnSubmitButtonClick(wxCommandEvent& evt);
 	void OnTimeButtonClick(wxCommandEvent& evt);
@@ -48,6 +49,7 @@ private:
 
 public:
 	
+
 	wxPanel* rightpanel = nullptr;
 	wxPanel* leftpanel = nullptr;
 

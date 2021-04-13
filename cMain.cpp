@@ -21,6 +21,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	lines = CreateLines();
 
+
+
 	/*  Split screen vertically into two equal sections. 
 	*   Things can be added to either rightpanel or leftpanel
 	*   depending on where they should be placed
@@ -57,15 +59,22 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 
 	wxBoxSizer* adultSizer = new wxBoxSizer(wxHORIZONTAL);
-	adultSizer->Add(m_adulttext, 1, wxALL, 2);
-	adultSizer->Add(m_adultcombo, 1, wxALL, 2);
+	adultSizer->Add(m_adulttext, 0, wxALL, 2);
+	adultSizer->Add(m_adultcombo, 0, wxALL, 2);
+	
+	leftSideSizer->Add(adultSizer, 0, wxALL, 5);
 
 	wxBoxSizer* childSizer = new wxBoxSizer(wxHORIZONTAL);
-	childSizer->Add(m_childtext, 1, wxALL, 2);
-	childSizer->Add(m_childcombo, 1, wxALL, 2);
+	childSizer->Add(m_childtext, 0, wxALL, 2);
+	childSizer->Add(m_childcombo, 0, wxALL, 2);
 
-	leftSideSizer->Add(adultSizer, 1, wxALL, 2);
-	leftSideSizer->Add(childSizer, 1, wxALL, 2);
+	leftSideSizer->Add(childSizer, 0, wxALL, 2);
+
+
+	wxStaticText* dummy1 = new wxStaticText(leftpanel, wxID_ANY, "");
+	wxBoxSizer* DummySizer1 = new wxBoxSizer(wxHORIZONTAL);
+	DummySizer1->Add(dummy1, 0);
+	leftSideSizer->Add(DummySizer1, 0, wxTOP, 5);
 
 
 	/*Calls vector "stationnames from 
@@ -93,16 +102,22 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_totext = new wxStaticText(leftpanel, wxID_ANY, "To:");
 
 	wxBoxSizer* FromSizer = new wxBoxSizer(wxHORIZONTAL);
-	FromSizer->Add(m_fromtext, 1, wxALL, 2);
-	FromSizer->Add(m_fromstation, 1, wxALL, 2);
+	FromSizer->Add(m_fromtext, 0, wxALL, 2);
+	FromSizer->Add(m_fromstation, 0, wxALL, 2);
 
-	leftSideSizer->Add(FromSizer, 1, wxALL, 3);
+	leftSideSizer->Add(FromSizer, 0, wxALL, 5);
 
 	wxBoxSizer* ToSizer = new wxBoxSizer(wxHORIZONTAL);
-	ToSizer->Add(m_totext, 1, wxALL, 2);
-	ToSizer->Add(m_tostation, 1, wxALL, 2);
+	ToSizer->Add(m_totext, 0, wxALL, 2);
+	ToSizer->Add(m_tostation, 0, wxALL, 2);
 
-	leftSideSizer->Add(ToSizer, 1, wxALL, 3);
+	leftSideSizer->Add(ToSizer, 0, wxALL, 2);
+
+	wxStaticText* dummy2 = new wxStaticText(leftpanel, wxID_ANY, "");
+	wxBoxSizer* DummySizer2 = new wxBoxSizer(wxHORIZONTAL);
+	DummySizer2->Add(dummy2, 0);
+	leftSideSizer->Add(DummySizer2, 0, wxTOP, 5);
+
 
 
 	/* Loops for creating arrays for day, month and year choices.
@@ -135,20 +150,20 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	
 	// Text for date input
-	m_whendaytext = new wxStaticText(leftpanel, wxID_ANY, "When: Day");
-	m_monthtext = new wxStaticText(leftpanel, wxID_ANY, "Month");
-	m_yeartext = new wxStaticText(leftpanel, wxID_ANY, "Year");
+	m_whendaytext = new wxStaticText(leftpanel, wxID_ANY, "When: Day:");
+	m_monthtext = new wxStaticText(leftpanel, wxID_ANY, "Month:");
+	m_yeartext = new wxStaticText(leftpanel, wxID_ANY, "Year:");
 
 
 	wxBoxSizer* DateSizer = new wxBoxSizer(wxHORIZONTAL);
-	DateSizer->Add(m_whendaytext, 1);
-	DateSizer->Add(m_dayinput, 1);
-	DateSizer->Add(m_monthtext, 1);
-	DateSizer->Add(m_monthinput, 1);
-	DateSizer->Add(m_yeartext, 1);
-	DateSizer->Add(m_yearinput, 1);
+	DateSizer->Add(m_whendaytext, 0, wxALL, 2);
+	DateSizer->Add(m_dayinput, 0, wxRIGHT, 20);
+	DateSizer->Add(m_monthtext, 0, wxRIGHT, 2);
+	DateSizer->Add(m_monthinput, 0, wxRIGHT, 20);
+	DateSizer->Add(m_yeartext, 0, wxRIGHT, 2);
+	DateSizer->Add(m_yearinput, 0);
 
-	leftSideSizer->Add(DateSizer, 1, wxALL, 1);
+	leftSideSizer->Add(DateSizer, 0);
 
 
 	m_timebutton = new wxButton(leftpanel, wxID_ANY, "Get Times");
@@ -165,18 +180,18 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	wxBoxSizer* TimeButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	TimeButtonsSizer->Add(m_timebutton, 1);
-	TimeButtonsSizer->Add(m_timeprev, 1);
+	TimeButtonsSizer->Add(m_timebutton, 0, wxLEFT, 2);
+	TimeButtonsSizer->Add(m_timeprev, 1, wxLEFT, 20);
 	TimeButtonsSizer->Add(m_timenext, 1);
 
-	leftSideSizer->Add(TimeButtonsSizer, 1);
+	leftSideSizer->Add(TimeButtonsSizer, 0, wxALL, 10);
 
-	m_journeytext1 = new wxStaticText(leftpanel, wxID_ANY, wxEmptyString, wxPoint(30, 350), wxDefaultSize);
+	m_journeytext1 = new wxStaticText(leftpanel, wxID_ANY, wxEmptyString);
 
-	leftSideSizer->Add(m_journeytext1, 1, wxALIGN_CENTRE_HORIZONTAL);
+	leftSideSizer->Add(m_journeytext1, 0, wxALIGN_CENTRE_HORIZONTAL | wxBOTTOM, 10);
 
 	// Listbox to display available times based on 
-	m_timelist = new wxListBox(leftpanel, wxID_ANY);
+	m_timelist = new wxListBox(leftpanel,  wxID_ANY, wxDefaultPosition, wxSize(50, 160) );
 	m_timelist->Bind(wxEVT_LISTBOX, &cMain::OnTrainTimeClick, this);
 
 	// Text for available times
@@ -184,10 +199,10 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	wxBoxSizer* TimeListSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	TimeListSizer->Add(m_timetext, 1);
-	TimeListSizer->Add(m_timelist, 1);
+	TimeListSizer->Add(m_timetext, 1, wxLEFT, 2);
+	TimeListSizer->Add(m_timelist, 1, wxLEFT, 2);
 
-	leftSideSizer->Add(TimeListSizer, 1);
+	leftSideSizer->Add(TimeListSizer, 1, wxALL, 10);
 
 
 	Train temp;
