@@ -24,9 +24,6 @@
     <ClInclude Include="Train.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Ticket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LineSearch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -48,9 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Train.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ticket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LineSearch.cpp">

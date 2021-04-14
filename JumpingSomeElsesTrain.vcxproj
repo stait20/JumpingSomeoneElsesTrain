@@ -23,7 +23,6 @@
     <ClInclude Include="cMain.h" />
     <ClInclude Include="Journey.h" />
     <ClInclude Include="LineSearch.h" />
-    <ClInclude Include="Ticket.h" />
     <ClInclude Include="CreateLines.h" />
     <ClInclude Include="StationNames.h" />
     <ClInclude Include="Train.h" />
@@ -33,7 +32,6 @@
     <ClCompile Include="cMain.cpp" />
     <ClCompile Include="Journey.cpp" />
     <ClCompile Include="LineSearch.cpp" />
-    <ClCompile Include="Ticket.cpp" />
     <ClCompile Include="Train.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

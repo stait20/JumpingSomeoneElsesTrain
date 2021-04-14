@@ -4,7 +4,6 @@
 #include "wx/wx.h"
 #include <wx/tglbtn.h>
 #include "Train.h"
-#include "Ticket.h"
 #include "Journey.h"
 
 #include <vector>

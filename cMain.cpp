@@ -263,6 +263,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	m_submit = new wxButton(rightpanel, 101, "Submit");
 	m_submit->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &cMain::OnSubmitButtonClick, this);
+	m_submit->Enable(false);
 
 	rightSideSizer->Add(m_journeytext2, 0, wxALIGN_CENTER | wxTOP, 5);
 	rightSideSizer->Add(traingridboth, 4, wxEXPAND | wxALL, 2);
@@ -395,6 +396,8 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 	std::string noOfAdults = (m_adultcombo->GetValue()).ToStdString();
 	
 	std::string traveldate = (m_dayinput->GetValue()).ToStdString() + "/" + (m_monthinput->GetValue()).ToStdString() + "/" + (m_yearinput->GetValue()).ToStdString();
+	std::string traveltime = (m_timelist->GetString(m_timelist->GetSelection())).ToStdString();
+
 	std::string depStation = (m_fromstation->GetValue()).ToStdString();
 	std::string arrStation = (m_tostation->GetValue()).ToStdString();
 
@@ -422,7 +425,8 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 
 
 	std::string BookingConfirm = std::string("Booking Confirmation\nDeparting from: ") + depStation + std::string("\nArriving at: ") + 
-								arrStation + std::string("\nAdults: ") + noOfAdults + std::string("\nChildren: ") + noOfChildren + std::string("\nChangover: ") + changeover;
+								arrStation + std::string("\nDeparting at: ") + traveldate + std::string(" ") + traveltime + std::string("\nAdults: ") + 
+								noOfAdults + std::string("\nChildren: ") + noOfChildren + std::string("\nChangover: ") + changeover;
 
 	m_messagedialog->SetMessage(BookingConfirm);
 	m_messagedialog->ShowModal();
@@ -525,8 +529,6 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	rightSideSizer->Layout();
 	evt.Skip();
 }
-
-
 
 void cMain::OnTimeNextButtonClick(wxCommandEvent& evt)
 {
@@ -662,5 +664,25 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 			}
 		}
 	}
+	
+	int fullSelection = 0;
+
+	for (int n : clicked)
+	{
+		if (n == noPeople)
+		{
+			fullSelection++;
+		}
+	}
+
+	if (fullSelection == clicked.size())
+	{
+		m_submit->Enable(true);
+	}
+	else
+	{
+		m_submit->Enable(false);
+	}
+
 	evt.Skip();
 }
