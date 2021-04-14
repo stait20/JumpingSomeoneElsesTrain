@@ -19,8 +19,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	// Seed random number generator
 	srand((unsigned int)time(NULL));
 
+	// Creates lines as specified in "CreateLines.h"
 	lines = CreateLines();
-
 
 
 	/*  Split screen vertically into two equal sections. 
@@ -33,10 +33,11 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	splittermain->SetMinimumPaneSize(20); 
 	sizermain->Add(splittermain, 1, wxEXPAND, 0);
 
-
+	// Create a panel for each side of the screen
 	leftpanel = new wxPanel(splittermain, wxID_ANY);
 	rightpanel = new wxPanel(splittermain, wxID_ANY);
 
+	// Sizer for left side of screen
 	wxBoxSizer* leftSideSizer = new wxBoxSizer(wxVERTICAL);
 
 	// Options for number of adults or children
@@ -57,7 +58,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_childtext = new wxStaticText(leftpanel, wxID_ANY, "Number of Children:");
 
 
-
+	// Add adult and child selections to appropriate sizers
 	wxBoxSizer* adultSizer = new wxBoxSizer(wxHORIZONTAL);
 	adultSizer->Add(m_adulttext, 0, wxALL, 2);
 	adultSizer->Add(m_adultcombo, 0, wxALL, 2);
@@ -70,7 +71,9 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	leftSideSizer->Add(childSizer, 0, wxALL, 5);
 
-
+	/* Creates a dummy sizer, this contains empty text with the sole purpose of 
+	adding more space between the actual elements 
+	*/
 	wxStaticText* dummy1 = new wxStaticText(leftpanel, wxID_ANY, "");
 	wxBoxSizer* DummySizer1 = new wxBoxSizer(wxHORIZONTAL);
 	DummySizer1->Add(dummy1, 0);
@@ -101,6 +104,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_fromtext = new wxStaticText(leftpanel, wxID_ANY, "From:");
 	m_totext = new wxStaticText(leftpanel, wxID_ANY, "To:");
 
+	// Add To and From station selections to relevent sizers
 	wxBoxSizer* FromSizer = new wxBoxSizer(wxHORIZONTAL);
 	FromSizer->Add(m_fromtext, 0, wxALL, 2);
 	FromSizer->Add(m_fromstation, 0, wxALL, 2);
@@ -113,6 +117,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	leftSideSizer->Add(ToSizer, 0, wxALL, 2);
 
+	// Another dummy sizer with the same goal as previous
 	wxStaticText* dummy2 = new wxStaticText(leftpanel, wxID_ANY, "");
 	wxBoxSizer* DummySizer2 = new wxBoxSizer(wxHORIZONTAL);
 	DummySizer2->Add(dummy2, 0);
@@ -155,6 +160,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_yeartext = new wxStaticText(leftpanel, wxID_ANY, "Year:");
 
 
+	// Add date input to relevent sizers
 	wxBoxSizer* DateSizer = new wxBoxSizer(wxHORIZONTAL);
 	DateSizer->Add(m_whendaytext, 0, wxALL, 2);
 	DateSizer->Add(m_dayinput, 0, wxRIGHT, 20);
@@ -165,7 +171,7 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 
 	leftSideSizer->Add(DateSizer, 0, wxALL, 5);
 
-
+	// Create buttons for getting train times and going between legs of a journey
 	m_timebutton = new wxButton(leftpanel, wxID_ANY, "Get Times");
 	m_timebutton->Bind(wxEVT_BUTTON, &cMain::OnTimeButtonClick, this);
 	
@@ -177,15 +183,15 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	m_timenext->Enable(false);
 	m_timenext->Bind(wxEVT_BUTTON, &cMain::OnTimeNextButtonClick, this);
 
-
+	// Add to relevent sizer
 	wxBoxSizer* TimeButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
-
 	TimeButtonsSizer->Add(m_timebutton, 0, wxLEFT, 2);
 	TimeButtonsSizer->Add(m_timeprev, 1, wxLEFT, 20);
 	TimeButtonsSizer->Add(m_timenext, 1);
 
 	leftSideSizer->Add(TimeButtonsSizer, 0, wxALL, 10);
 
+	// Text to display journey info
 	m_journeytext1 = new wxStaticText(leftpanel, wxID_ANY, wxEmptyString);
 
 	leftSideSizer->Add(m_journeytext1, 0,  wxALL, 7);
@@ -197,24 +203,26 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	// Text for available times
 	m_timetext = new wxStaticText(leftpanel, wxID_ANY, "Available times:");
 
+	// Add to sizer
 	wxBoxSizer* TimeListSizer = new wxBoxSizer(wxHORIZONTAL);
-
 	TimeListSizer->Add(m_timetext, 1, wxLEFT, 2);
 	TimeListSizer->Add(m_timelist, 1, wxLEFT, 2);
 
 	leftSideSizer->Add(TimeListSizer, 1, wxALL, 5);
 
+	// String with info on usage of the GUI
 	std::string explain = "On the train diagram, red seats represent seats that have\nalready been booked, while orange seats represent seats that\nare unavailable for booking due to COVID restrictions";
 							
 	m_explaintext = new wxStaticText(leftpanel, wxID_ANY, explain);
 
 	leftSideSizer->Add(m_explaintext, 1, wxALL, 7);
 
+	// Create temporary train to get height and width values
 	Train temp;
 	height = temp.getHeight();
 	width = temp.getWidth();
-
-
+	
+	// Text to show journey info
 	m_journeytext2 = new wxStaticText(rightpanel, wxID_ANY, "HELLO!");
 
 	// Initiate button array and grid sizer to place buttons in
@@ -283,7 +291,8 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	this->SetSizer(sizermain);
 	sizermain->SetSizeHints(this);
 
-	m_messagedialog = new wxMessageDialog(this, "hello", "Hi", wxOK);
+	// Creates pop up box used for booking confirmation and error messages
+	m_messagedialog = new wxMessageDialog(this, wxEmptyString, wxEmptyString, wxOK);
 }
 
 cMain::~cMain()
@@ -364,12 +373,14 @@ void cMain::updateTrainButtons(Train t)
 
 	int x, y;
 
+	// Checks what seats were already selected ...
 	if (!selected.empty())
 	{
 		for (int n : selected[pos])
 		{
 			x = n / height;
 			y = n % height;
+			// Then sets them to be enabled and selected
 			if (n < width*height)
 			{
 				trainbtn1[x * height + y]->SetValue(true);
@@ -381,11 +392,6 @@ void cMain::updateTrainButtons(Train t)
 				trainbtn2[x * height + y - (height * width)]->Enable(true);
 			}
 		}
-	}
-
-	if (clicked[pos] == noPeople)
-	{
-
 	}
 }
 
@@ -423,11 +429,12 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 		changeover = changeover.substr(0, changeover.size() - 2);
 	}
 
-
+	// Combine info into one long string
 	std::string BookingConfirm = std::string("Booking Confirmation\nDeparting from: ") + depStation + std::string("\nArriving at: ") + 
 								arrStation + std::string("\nDeparting at: ") + traveldate + std::string(" ") + traveltime + std::string("\nAdults: ") + 
 								noOfAdults + std::string("\nChildren: ") + noOfChildren + std::string("\nChangover: ") + changeover;
 
+	// Display message in pop up box
 	m_messagedialog->SetMessage(BookingConfirm);
 	m_messagedialog->ShowModal();
 	evt.Skip();
@@ -567,6 +574,7 @@ void cMain::OnTimePrevButtonClick(wxCommandEvent& evt)
 
 void cMain::OnTrainTimeClick(wxCommandEvent& evt)
 {
+	// Reset selected and clicked variables
 	selected.clear();
 	clicked.clear();
 	selected.resize(route.size() - 1);
@@ -665,8 +673,10 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 		}
 	}
 	
+	
 	int fullSelection = 0;
 
+	// Checks whether all seats have been selected for each train
 	for (int n : clicked)
 	{
 		if (n == noPeople)
@@ -675,6 +685,7 @@ void cMain::OnTrainButtonClick(wxCommandEvent& evt)
 		}
 	}
 
+	// If so, the sumbit button will be enabled
 	if (fullSelection == clicked.size())
 	{
 		m_submit->Enable(true);
