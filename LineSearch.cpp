@@ -6,10 +6,8 @@
 *	it only works with journeys up to 2 transfers, but I imagine that		*
 *	could be expanded.														*
 *																			*
-*	It makes uses numbers to represent stations, but this could be easily	*
-*	changed to just contain the actual station names						*
-*	These stations are stored in a 2D vector to represent the different		*
-*	lines.																	*
+*	This makes use of a 2D vector that's storing each of the lines that		*
+*	contain all of their component stations									*
 *																			*
 *****************************************************************************/
 
@@ -25,8 +23,7 @@
 
 std::vector<std::string> intersection(std::vector<std::string>& v1, std::vector<std::string>& v2)
 {
-	// Returns a vector containing all values found in
-	// both input vectors
+	// Returns a vector containing all values found in both input vectors
 	std::vector<std::string> v3;
 
 	std::sort(v1.begin(), v1.end());
