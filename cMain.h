@@ -15,7 +15,6 @@ public:
 	~cMain();
 
 private:
-	void wxOnMenuEvent(wxCommandEvent& evt);
 	void OnTrainButtonClick(wxCommandEvent& evt);
 	void OnSubmitButtonClick(wxCommandEvent& evt);
 	void OnTimeButtonClick(wxCommandEvent& evt);

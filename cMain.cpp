@@ -437,6 +437,8 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 	// Display message in pop up box
 	m_messagedialog->SetMessage(BookingConfirm);
 	m_messagedialog->ShowModal();
+
+	
 	evt.Skip();
 }
 

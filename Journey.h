@@ -10,6 +10,7 @@ class Journey
 private:
 	std::vector<Train> trains;
 	std::vector<std::string> route;
+	// Stores time as a single integer of number of minutes since 00:00
 	int depTime;
 
 public:
