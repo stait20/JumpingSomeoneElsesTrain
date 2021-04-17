@@ -1,3 +1,14 @@
+/****************************************************************************
+*																			*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- Train.cpp				*
+*																			*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 08/04/21													*
+*	Update Description:	Changed trainArr to be a 2D vector					*
+*																			*
+*****************************************************************************/
+
 #include "Train.h"
 #include <cstdlib> 
 #include <ctime>

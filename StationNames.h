@@ -1,3 +1,14 @@
+/****************************************************************************
+*																			*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- StationNames.h		*
+*																			*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 09/04/21													*
+*	Update Description:	Created file to store station names					*
+*																			*
+*****************************************************************************/
+
 #ifndef STATIONNAMES_HEADER
 #define STATIONNAMES_HEADER
 

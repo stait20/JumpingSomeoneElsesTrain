@@ -1,3 +1,14 @@
+/****************************************************************************
+*																			*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- cApp.cpp				*
+*																			*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 23/02/21													*
+*	Update Description:	Added basic wxWidgets framework to display GUI		*
+*																			*
+*****************************************************************************/
+
 #include "cApp.h"
 
 wxIMPLEMENT_APP(cApp);

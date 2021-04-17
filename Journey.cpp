@@ -1,3 +1,15 @@
+/****************************************************************************
+*																			*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- Journey.cpp			*
+*																			*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 12/04/21													*
+*	Update Description:	Removed tempory lines, now gets lines input			*
+*	externally																*
+*																			*
+*****************************************************************************/
+
 #include "Journey.h"
 #include "LineSearch.h"
 

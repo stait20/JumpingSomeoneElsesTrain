@@ -1,3 +1,14 @@
+/****************************************************************************
+*																			*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- cApp.h				*
+*																			*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 23/02/21													*
+*	Update Description:	Added basic wxWidgets framework to display GUI		*
+*																			*
+*****************************************************************************/
+
 #ifndef APP_HEADER
 #define APP_HEADER
 

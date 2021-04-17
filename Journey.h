@@ -1,3 +1,14 @@
+/****************************************************************************
+*																			*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- Journey.h				*
+*																			*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 12/04/21													*
+*	Update Description:	Added lines vector input to contructor				*
+*																			*
+*****************************************************************************/
+
 #ifndef JOURNEY_HEADER
 #define JOURNEY_HEADER
 

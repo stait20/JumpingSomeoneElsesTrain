@@ -1,8 +1,22 @@
+/****************************************************************************
+*																			*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- cMain.h				*
+*																			*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 12/04/21													*
+*	Update Description:	Removed ticket type radio buttons and tempory		*
+*	TextCtrl																*
+*																			*
+*****************************************************************************/
+
 #ifndef MAIN_HEADER
 #define MAIN_HEADER
 
 #include "wx/wx.h"
 #include <wx/tglbtn.h>
+#include <wx/splitter.h>
+#include <wx/textfile.h>
 #include "Train.h"
 #include "Journey.h"
 

@@ -1,13 +1,12 @@
 /****************************************************************************
 *																			*
-*	This code is a possible solution to finding transfer stations for more  *
-*	complex journeys.														*
-*	This solution is not remotely elegent or efficient, and currently		*
-*	it only works with journeys up to 2 transfers, but I imagine that		*
-*	could be expanded.														*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- LineSearch.cpp		*
 *																			*
-*	This makes use of a 2D vector that's storing each of the lines that		*
-*	contain all of their component stations									*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 08/04/21													*
+*	Update Description:	Changed program to work with strings instead of		*
+*	ints																	*
 *																			*
 *****************************************************************************/
 

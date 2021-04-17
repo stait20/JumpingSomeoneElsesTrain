@@ -1,14 +1,23 @@
-﻿#include <string>
-#include <wx/splitter.h>
-#include <wx/textfile.h>
-#include "cMain.h"
+﻿/****************************************************************************
+*																			*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- cMain.cpp				*
+*																			*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 14/04/21													*
+*	Update Description:	Added validation to submit button					*
+*																			*
+*****************************************************************************/
+
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <list>
+#include "cMain.h"
 #include "LineSearch.h"
 #include "StationNames.h"
 #include "CreateLines.h"
-#include <list>
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
 

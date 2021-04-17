@@ -1,3 +1,14 @@
+/****************************************************************************
+*																			*
+*	EE273 - Group 34 - Jumping Someone Else's Train	- CreateLines.h			*
+*																			*
+*	Sam Tait & Frazer Murray												*
+*																			*
+*	Last Updated: 12/04/21													*
+*	Update Description:	Added Glasgow to Edinburgh line						*
+*																			*
+*****************************************************************************/
+
 #ifndef LINES_HEADER
 #define LINES_HEADER
 
