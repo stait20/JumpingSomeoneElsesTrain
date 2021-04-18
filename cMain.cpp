@@ -4,8 +4,9 @@
 *																			*
 *	Sam Tait & Frazer Murray												*
 *																			*
-*	Last Updated: 14/04/21													*
-*	Update Description:	Added validation to submit button					*
+*	Last Updated: 18/04/21													*
+*	Update Description:	Moved location of message box declaration and added *
+*	delete statement to fix mememory leaking								*
 *																			*
 *****************************************************************************/
 
@@ -158,9 +159,9 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	}
 
 	// Combo Boxes to input day, month and year
-	m_dayinput = new wxComboBox(leftpanel, 200, wxEmptyString, wxDefaultPosition, wxDefaultSize, dayComboChoices, wxCB_DROPDOWN);
-	m_monthinput = new wxComboBox(leftpanel, 201, wxEmptyString, wxDefaultPosition, wxDefaultSize, monthComboChoices, wxCB_DROPDOWN);
-	m_yearinput = new wxComboBox(leftpanel, 202, wxEmptyString, wxDefaultPosition, wxDefaultSize, yearComboChoices, wxCB_DROPDOWN);
+	m_dayinput = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, dayComboChoices, wxCB_DROPDOWN);
+	m_monthinput = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, monthComboChoices, wxCB_DROPDOWN);
+	m_yearinput = new wxComboBox(leftpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, yearComboChoices, wxCB_DROPDOWN);
 
 	
 	// Text for date input
@@ -299,9 +300,6 @@ cMain::cMain() : wxFrame(nullptr, wxID_ANY, "Jumping Someone Else's Train", wxPo
 	// Set split panel sizer to the main sizer of the frame
 	this->SetSizer(sizermain);
 	sizermain->SetSizeHints(this);
-
-	// Creates pop up box used for booking confirmation and error messages
-	m_messagedialog = new wxMessageDialog(this, wxEmptyString, wxEmptyString, wxOK);
 }
 
 cMain::~cMain()
@@ -444,8 +442,10 @@ void cMain::OnSubmitButtonClick(wxCommandEvent& evt)
 								noOfAdults + std::string("\nChildren: ") + noOfChildren + std::string("\nChangover: ") + changeover;
 
 	// Display message in pop up box
+	m_messagedialog = new wxMessageDialog(this, wxEmptyString, wxEmptyString, wxOK);
 	m_messagedialog->SetMessage(BookingConfirm);
 	m_messagedialog->ShowModal();
+	delete m_messagedialog;
 
 	
 	evt.Skip();
@@ -465,8 +465,10 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	// Validate adult and child input
 	if (m_adultcombo->GetValue() == wxEmptyString || m_childcombo->GetValue() == wxEmptyString)
 	{
+		m_messagedialog = new wxMessageDialog(this, wxEmptyString, wxEmptyString, wxOK);
 		m_messagedialog->SetMessage("Error: No value for adult and child tickets selected");
 		m_messagedialog->ShowModal();
+		delete m_messagedialog;
 		return;
 	}
 
@@ -477,15 +479,19 @@ void cMain::OnTimeButtonClick(wxCommandEvent& evt)
 	// Validate station input
 	if (depStation == wxEmptyString || arrStation == wxEmptyString)
 	{
+		m_messagedialog = new wxMessageDialog(this, wxEmptyString, wxEmptyString, wxOK);
 		m_messagedialog->SetMessage("Error: Arrival or departure station not selected");
 		m_messagedialog->ShowModal();
+		delete m_messagedialog;
 		return;
 	}
 
 	if (m_dayinput->GetValue() == wxEmptyString || m_monthinput->GetValue() == wxEmptyString || m_yearinput->GetValue() == wxEmptyString)
 	{
+		m_messagedialog = new wxMessageDialog(this, wxEmptyString, wxEmptyString, wxOK);
 		m_messagedialog->SetMessage("Error: Date input not selected");
 		m_messagedialog->ShowModal();
+		delete m_messagedialog;
 		return;
 	}
 
